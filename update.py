@@ -60,11 +60,6 @@ if __name__ == "__main__":
     except:
         print('directory already exists')
 
-    try: 
-        os.mkdir('images')
-    except:
-        print('images directory already exists')
-
     create_list()
 
     repair_pokemon('pokemon', get_list())
