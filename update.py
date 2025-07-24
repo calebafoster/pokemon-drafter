@@ -16,7 +16,7 @@ def create_list():
         json.dump(move_dict['results'], f, indent=4)
 
 def get_list():
-    with open('pokelist', 'r') as f:
+    with open('pokelist.json', 'r') as f:
         return json.load(f)
 
 def do_the_pokemon(path, p_list):
