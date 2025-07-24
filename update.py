@@ -2,6 +2,7 @@ import requests
 import json
 import os
 from time import sleep
+from pathlib import Path
 
 def create_list():
     r = requests.get('https://pokeapi.co/api/v2/pokemon/?limit=10000')
@@ -32,6 +33,27 @@ def do_the_pokemon(path, p_list):
         print(f'imported {name}')
         sleep(50 / 1000)
 
+def repair_pokemon(path, p_list):
+    for pokemon in p_list:
+        name = pokemon['name']
+
+        file_path = Path(f'pokemon/{name}.json')
+        
+        if file_path.is_file():
+            print(f'{name} already exists')
+            continue
+        else:
+            try:
+                r = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
+                poke_dict = r.json()
+
+                with open(file_path, 'w') as f:
+                    json.dump(poke_dict, f, indent=4)
+
+                print(f'imported {name}')
+            except:
+                print(f'failed to find {name}')
+
 if __name__ == "__main__":
     try:
         os.mkdir('pokemon')
@@ -40,4 +62,4 @@ if __name__ == "__main__":
 
     create_list()
 
-    do_the_pokemon('pokemon', get_list())
+    repair_pokemon('pokemon', get_list())
