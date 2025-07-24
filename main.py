@@ -6,7 +6,7 @@ import json
 
 class Game:
     def __init__(self):
-        _ = pygame.init()
+        pygame.init()
         self.display_surface = pygame.display.set_mode((1280, 720))
         pygame.display.set_caption('Pokemon Drafter')
         self.clock = pygame.time.Clock()
@@ -14,7 +14,7 @@ class Game:
         with open('pokelist.json', 'r') as f:
             self.pokelist = json.load(f)
 
-        self.random = random.randint(0,150)
+        self.random = random.randint(0,len(self.pokelist))
         self.pick = self.pokelist[self.random]
 
         self.pokemon = pokemon.Pokemon(self.pick['name'])

@@ -10,7 +10,6 @@ class Pokemon(pygame.sprite.Sprite):
         self.name = name
         self.nickname = nickname
 
-        self.image = None
         
         self.import_assets()
         self.rect = self.image.get_rect()
