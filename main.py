@@ -9,7 +9,7 @@ class Game:
         pygame.display.set_caption('Pokemon Drafter')
         self.clock = pygame.time.Clock()
 
-        self.pokemon = pokemon.Pokemon('roaring-moon', 'pikachu')
+        self.pokemon = pokemon.Pokemon('arceus')
 
     def run(self):
         while True:

@@ -31,9 +31,13 @@ class Pokemon(pygame.sprite.Sprite):
         image_url = self.poke_dict['sprites']['front_default']
 
         r = requests.get(image_url)
-        with open(self.image_path, 'wb') as f:
-            f.write(r.content)
-        print(f'image download successful: {self.name}')
+        if r.status_code == 200:
+            with open(self.image_path, 'wb') as f:
+                f.write(r.content)
+            print(f'image download successful: {self.name}')
+        else:
+            self.image_path = Path('images/missing.png')
+            print('image download unsuccesful, replacing with missingno')
 
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
