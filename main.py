@@ -6,14 +6,15 @@ import json
 from pygame.math import Vector2 as vector
 
 class Background(pygame.sprite.Sprite):
-    def __init__(self, path, pos):
+    def __init__(self, path, pos, groups):
+        super().__init__(groups)
         self.image = pygame.image.load(path)
         self.rect = self.image.get_rect(topleft = pos)
 
         self.default_pos = vector(self.rect.topleft)
 
         self.pos = vector(self.rect.topleft)
-        self.speed = 200
+        self.speed = 100
 
     def move(self, dt):
         if self.pos.x < self.default_pos.x - self.image.get_width():
@@ -37,8 +38,11 @@ class Game:
 
         self.random = random.randint(0,len(self.pokelist))
         self.pick = self.pokelist[self.random]
-        self.background = Background('wallpaper.jpg', (1280, 0))
-        self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0))
+
+        self.backgrounds = pygame.sprite.Group()
+
+        self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
+        self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
 
         self.pokemon = pokemon.Pokemon(self.pick['name'])
 
@@ -52,12 +56,9 @@ class Game:
 
             dt = self.clock.tick() / 1000
 
-            self.background.update(dt)
-            self.background2.update(dt)
+            self.backgrounds.update(dt)
 
-            self.display_surface.fill('aqua')
-            self.display_surface.blit(self.background.image, self.background.rect.topleft)
-            self.display_surface.blit(self.background2.image, self.background2.rect.topleft)
+            self.backgrounds.draw(self.display_surface)
             self.display_surface.blit(self.pokemon.image, self.pokemon.rect.topleft)
 
             pygame.display.update()
