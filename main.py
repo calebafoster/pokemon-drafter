@@ -1,6 +1,7 @@
 import pygame
 import sys
-import pokemon
+from pokemon import Pokemon
+from biker import Biker
 import random
 import json
 from pygame.math import Vector2 as vector
@@ -47,7 +48,7 @@ class Game:
         with open('pokelist.json', 'r') as f:
             self.pokelist = json.load(f)
 
-        self.random = random.randint(0,len(self.pokelist))
+        self.random = random.randint(1,len(self.pokelist) + 1)
         self.pick = self.pokelist[self.random]
 
         self.backgrounds = Backgrounds()
@@ -55,7 +56,8 @@ class Game:
         self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
 
-        self.pokemon = pokemon.Pokemon(self.pick['name'])
+        self.pokemon = Pokemon(self.pick['name'], (0,0))
+        self.biker = Biker((100,360), self.backgrounds)
 
     def run(self):
         while True:

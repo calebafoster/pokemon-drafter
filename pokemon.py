@@ -1,10 +1,11 @@
 import pygame
 import json
 from pathlib import Path
+from pygame import Vector2 as vector
 import requests
 
 class Pokemon(pygame.sprite.Sprite):
-    def __init__(self, name, nickname = ''):
+    def __init__(self, name, pos, nickname = ''):
         super().__init__()
 
         self.name = name
@@ -12,8 +13,10 @@ class Pokemon(pygame.sprite.Sprite):
 
         
         self.import_assets()
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (0,0)
+        pygame.transform.scale_by(self.image, 2)
+        self.rect = self.image.get_rect(topleft = pos)
+
+        self.pos = vector(self.rect.topleft)
 
     def import_assets(self):
         with open(f'pokemon/{self.name}.json', 'r') as f:
@@ -28,8 +31,8 @@ class Pokemon(pygame.sprite.Sprite):
 
     def download_image(self):
         image_url = self.poke_dict['sprites']['front_default']
-
         r = requests.get(image_url)
+
         if r.status_code == 200:
             with open(self.image_path, 'wb') as f:
                 f.write(r.content)
@@ -41,5 +44,5 @@ class Pokemon(pygame.sprite.Sprite):
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
 if __name__ == '__main__':
-    pikachoo = Pokemon('chikorita')
+    pikachoo = Pokemon('chikorita', (0,0))
     print(pikachoo.poke_dict['id'])
