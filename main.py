@@ -5,6 +5,14 @@ import random
 import json
 from pygame.math import Vector2 as vector
 
+class Backgrounds(pygame.sprite.Group):
+    def __init__(self):
+        super().__init__()
+
+    def change_image(self, path):
+        for sprite in self.sprites():
+            sprite.change_image(path)
+
 class Background(pygame.sprite.Sprite):
     def __init__(self, path, pos, groups):
         super().__init__(groups)
@@ -21,6 +29,9 @@ class Background(pygame.sprite.Sprite):
             self.pos.x = self.default_pos.x
         self.pos.x += -1 * self.speed * dt
         self.rect.x = round(self.pos.x)
+
+    def change_image(self, path):
+        self.image = pygame.image.load(path)
 
     def update(self, dt):
         self.move(dt)
@@ -39,7 +50,7 @@ class Game:
         self.random = random.randint(0,len(self.pokelist))
         self.pick = self.pokelist[self.random]
 
-        self.backgrounds = pygame.sprite.Group()
+        self.backgrounds = Backgrounds()
 
         self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
