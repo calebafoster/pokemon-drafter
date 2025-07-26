@@ -10,13 +10,26 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.name = name
         self.nickname = nickname
-
         
         self.import_assets()
-        pygame.transform.scale_by(self.image, 2)
+        self.image = pygame.transform.scale_by(self.image, 3)
         self.rect = self.image.get_rect(topleft = pos)
 
         self.pos = vector(self.rect.topleft)
+
+        self.types = self.get_types()
+        self.bst = 0
+        self.stage = 0
+        self.can_evolve = False
+
+        self.move_list = []
+        self.ability_list = []
+
+        self.moves = []
+        self.ability = ''
+
+    def get_types(self):
+        self.types = self.poke_dict["types"]
 
     def import_assets(self):
         with open(f'pokemon/{self.name}.json', 'r') as f:
