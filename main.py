@@ -4,39 +4,8 @@ from pokemon import Pokemon
 from biker import Biker
 import random
 import json
+from background import Background, Backgrounds
 from pygame.math import Vector2 as vector
-
-class Backgrounds(pygame.sprite.Group):
-    def __init__(self):
-        super().__init__()
-
-    def change_image(self, path):
-        for sprite in self.sprites():
-            sprite.change_image(path)
-
-class Background(pygame.sprite.Sprite):
-    def __init__(self, path, pos, groups):
-        super().__init__(groups)
-        self.image = pygame.image.load(path)
-        self.rect = self.image.get_rect(topleft = pos)
-
-        self.default_pos = vector(self.rect.topleft)
-
-        self.pos = vector(self.rect.topleft)
-        self.speed = 100
-
-    def move(self, dt):
-        if self.pos.x < self.default_pos.x - self.image.get_width():
-            self.pos.x = self.default_pos.x
-        self.pos.x += -1 * self.speed * dt
-        self.rect.x = round(self.pos.x)
-
-    def change_image(self, path):
-        self.image = pygame.image.load(path)
-
-    def update(self, dt):
-        self.move(dt)
-
 
 class Game:
     def __init__(self):
@@ -48,16 +17,43 @@ class Game:
         with open('pokelist.json', 'r') as f:
             self.pokelist = json.load(f)
 
-        self.random = random.randint(1,len(self.pokelist) + 1)
-        self.pick = self.pokelist[self.random]
-
         self.backgrounds = Backgrounds()
 
         self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
+        self.choices = pygame.sprite.Group()
 
-        self.pokemon = Pokemon(self.pick['name'], (0,0))
+        self.pokemon = Pokemon('miraidon', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
+
+        self.state = 'pokemon_picker'
+
+        self.create_choices(Pokemon, 4, self.pokelist)
+        self.arrange_choices()
+
+    def create_choices(self, Product, num, lis):
+        self.choices.empty()
+
+        for i in range(num):
+            rand = random.randint(0, len(lis) - 1)
+            current = lis[rand]
+            name = current['name']
+            self.choices.add(Product(name, (0,0)))
+
+    def arrange_choices(self):
+        current_pos = vector(0,0)
+        right_x = 0
+        iteration = 1280 / len(self.choices)
+
+        for opt in self.choices.sprites():
+            opt.rect.topleft = current_pos
+            current_pos.x += iteration
+            right_x = opt.rect.right
+
+        offset = (1280 - right_x) / 2
+
+        for opt in self.choices.sprites():
+            opt.rect.x += offset
 
     def run(self):
         while True:
@@ -72,7 +68,7 @@ class Game:
             self.backgrounds.update(dt)
 
             self.backgrounds.draw(self.display_surface)
-            self.display_surface.blit(self.pokemon.image, self.pokemon.rect.topleft)
+            self.choices.draw(self.display_surface)
 
             pygame.display.update()
 
