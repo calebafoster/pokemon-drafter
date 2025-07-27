@@ -23,11 +23,7 @@ class Game:
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
         self.choices = pygame.sprite.Group()
 
-<<<<<<< HEAD
         self.pokemon = Pokemon('miraidon', (0,0))
-=======
-        self.pokemon = Pokemon('treecko', (0,0))
->>>>>>> 4f33ecdc4a1c650381004b056cf4f8abbdb0d824
         self.biker = Biker((100,360), self.backgrounds)
 
         self.state = 'pokemon_picker'
