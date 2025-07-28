@@ -22,20 +22,51 @@ class Game:
         self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
         self.choices = pygame.sprite.Group()
+        self.team = pygame.sprite.Group()
 
         self.pokemon = Pokemon('miraidon', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
 
         self.state = 'pokemon_picker'
 
-        self.create_choices(Pokemon, 4, self.pokelist)
-        self.arrange_choices()
+        self.can_choose = False
+
+        self.dex_sanity()
+
+    def dex_sanity(self):
+        for i, poke in enumerate(self.pokelist):
+            name = poke['name']
+            current = None
+            id_num = 0
+
+            with open(f'pokemon/{name}.json', 'r') as f:
+                current = json.load(f)
+                id_num = current['id']
+
+            if id_num >= 10000:
+                self.dex_num = i - 1
+                break
+
+    def test_menu(self):
+        if not self.choices:
+            self.create_choices(Pokemon, 6, self.pokelist)
+            self.arrange_choices()
+
+        for sprite in self.choices:
+            if sprite.is_clicked() and self.can_choose:
+                self.can_choose = False
+                self.team.add(sprite)
+                self.choices.empty()
+
+    def choice_sanity(self):
+        if not pygame.mouse.get_pressed()[0]:
+            self.can_choose = True
 
     def create_choices(self, Product, num, lis):
         self.choices.empty()
 
         for i in range(num):
-            rand = random.randint(0, len(lis) - 1)
+            rand = random.randint(0, self.dex_num)
             current = lis[rand]
             name = current['name']
             self.choices.add(Product(name, (0,0)))
@@ -65,7 +96,12 @@ class Game:
 
             dt = self.clock.tick() / 1000
 
+            self.test_menu()
+
             self.backgrounds.update(dt)
+            self.choices.update(dt)
+
+            self.choice_sanity()
 
             self.backgrounds.draw(self.display_surface)
             self.choices.draw(self.display_surface)

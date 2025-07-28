@@ -36,7 +36,44 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.moves = []
 
+        self.clicked = False
+        self.right_clicked = False
+
         print(f'ability = {self.ability}')
+
+    def is_clicked(self):
+        pos = pygame.mouse.get_pos()
+        action = False
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if not pygame.mouse.get_pressed()[0]:
+            self.clicked = False
+
+        return action
+
+    def is_right_clicked(self):
+        pos = pygame.mouse.get_pos()
+        action = False
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[2] and not self.right_clicked:
+                self.right_clicked = True
+                action = True
+
+        if not pygame.mouse.get_pressed()[2]:
+            self.right_clicked = False
+
+        return action
+
+    def is_hovering(self):
+        pos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(pos):
+            return True
 
     def set_ability(self):
         index = random.randint(0, len(self.ability_list)) - 1
@@ -78,6 +115,10 @@ class Pokemon(pygame.sprite.Sprite):
             print('image download unsuccesful, replacing with missingno')
 
         self.image = pygame.image.load(self.image_path).convert_alpha()
+
+    def update(self, dt):
+        if self.is_clicked():
+            print("CLICK")
 
 if __name__ == '__main__':
     pikachoo = Pokemon('chikorita', (0,0))
