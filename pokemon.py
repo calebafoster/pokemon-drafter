@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from pygame import Vector2 as vector
 import requests
+import random
 
 class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, pos, nickname = ''):
@@ -10,26 +11,48 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.name = name
         self.nickname = nickname
+
+        print(self.name)
         
         self.import_assets()
-        self.image = pygame.transform.scale_by(self.image, 3)
+        self.image = pygame.transform.scale_by(self.image, 2)
         self.rect = self.image.get_rect(topleft = pos)
 
         self.pos = vector(self.rect.topleft)
 
-        self.types = self.get_types()
+        self.types = []
         self.bst = 0
         self.stage = 0
         self.can_evolve = False
 
-        self.move_list = []
-        self.ability_list = []
+        self.move_list = self.poke_dict['moves']
+        self.ability_list = self.poke_dict['abilities']
 
-        self.moves = []
         self.ability = ''
 
+        self.get_types()
+        self.get_bst()
+        self.set_ability()
+
+        self.moves = []
+
+        print(f'ability = {self.ability}')
+
+    def set_ability(self):
+        index = random.randint(0, len(self.ability_list)) - 1
+        self.ability = self.ability_list[index]
+
     def get_types(self):
-        self.types = self.poke_dict["types"]
+        for poke_type in self.poke_dict['types']:
+            self.types.append(poke_type['type']['name'])
+
+    def get_bst(self):
+        count = 0
+
+        for stat in self.poke_dict['stats']:
+            count += stat['base_stat']
+
+        self.bst = count
 
     def import_assets(self):
         with open(f'pokemon/{self.name}.json', 'r') as f:
