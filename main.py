@@ -47,12 +47,19 @@ class Game:
                 self.dex_num = i - 1
                 break
 
+    def display_text(self):
+        for sprite in self.choices:
+            sprite.display_text(self.display_surface)
+
     def test_menu(self):
         if not self.choices:
-            self.create_choices(Pokemon, 6, self.pokelist)
+            self.create_choices(Pokemon, 4, self.pokelist)
             self.arrange_choices()
 
         for sprite in self.choices:
+
+            self.display_text()
+
             if sprite.is_clicked() and self.can_choose:
                 self.can_choose = False
                 self.team.add(sprite)

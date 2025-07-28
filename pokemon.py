@@ -5,14 +5,50 @@ from pygame import Vector2 as vector
 import requests
 import random
 
+class Text(pygame.sprite.Sprite):
+    def __init__(self, name, bst, types, size = 30):
+        super().__init__()
+
+        self.font = pygame.font.Font(None, size)
+        self.name = name
+        self.bst = str(bst)
+        self.types = ' '.join(types)
+        self.text_list = [self.name, self.bst, self.types]
+
+        self.generate_surfs()
+
+    def draw_text(self, surface, index, pos):
+        self.rect_list[index].topleft = pos
+        surface.blit(self.bg_surfs[index], self.rect_list[index].topleft)
+
+    def generate_surfs(self):
+        self.text_surfs = []
+        self.bg_surfs = []
+        self.rect_list = []
+
+        for txt in self.text_list:
+            print(txt)
+            img = self.font.render(txt, True, 'white')
+            rect = img.get_rect()
+            self.text_surfs.append(img)
+            self.rect_list.append(rect)
+
+        for i, surf in enumerate(self.text_surfs):
+            bg = pygame.surface.Surface((surf.get_width(), surf.get_height()))
+            bg.set_alpha(120)
+            bg.fill('black')
+
+            self.bg_surfs.append(bg)
+
+            self.bg_surfs[i].blit(surf, (0,0))
+
+
 class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, pos, nickname = ''):
         super().__init__()
 
         self.name = name
         self.nickname = nickname
-
-        print(self.name)
         
         self.import_assets()
         self.image = pygame.transform.scale_by(self.image, 2)
@@ -28,7 +64,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.move_list = self.poke_dict['moves']
         self.ability_list = self.poke_dict['abilities']
 
-        self.ability = ''
+        self.ability = None
 
         self.get_types()
         self.get_bst()
@@ -39,7 +75,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.clicked = False
         self.right_clicked = False
 
-        print(f'ability = {self.ability}')
+        self.text = Text(self.name, self.bst, self.types)
 
     def is_clicked(self):
         pos = pygame.mouse.get_pos()
@@ -54,6 +90,10 @@ class Pokemon(pygame.sprite.Sprite):
             self.clicked = False
 
         return action
+
+    def display_text(self, surface):
+        if self.is_hovering():
+            self.text.draw_text(surface, 0, self.rect.topleft)
 
     def is_right_clicked(self):
         pos = pygame.mouse.get_pos()
@@ -117,8 +157,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def update(self, dt):
-        if self.is_clicked():
-            print("CLICK")
+        pass
 
 if __name__ == '__main__':
     pikachoo = Pokemon('chikorita', (0,0))
