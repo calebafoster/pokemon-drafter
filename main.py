@@ -56,7 +56,7 @@ class Game:
         self.background = Background('wallpaper.jpg', (1280, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
 
-        self.pokemon = Pokemon('treecko', (0,0))
+        self.pokemon = Pokemon('grovyle', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
 
     def run(self):
