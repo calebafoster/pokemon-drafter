@@ -10,9 +10,9 @@ class Text(pygame.sprite.Sprite):
         super().__init__()
 
         self.font = pygame.font.Font(None, size)
-        self.name = name
-        self.bst = str(bst)
-        self.types = ' '.join(types)
+        self.name = name.upper()
+        self.bst = f'BST: {bst}'
+        self.types = ' '.join(types).upper()
         self.text_list = [self.name, self.bst, self.types]
 
         self.generate_surfs()
