@@ -103,15 +103,13 @@ class Game:
 
             dt = self.clock.tick() / 1000
 
-            self.test_menu()
-
             self.backgrounds.update(dt)
             self.choices.update(dt)
 
             self.choice_sanity()
-
             self.backgrounds.draw(self.display_surface)
             self.choices.draw(self.display_surface)
+            self.test_menu()
 
             pygame.display.update()
 
