@@ -19,7 +19,12 @@ class Text(pygame.sprite.Sprite):
 
     def draw_text(self, surface, index, pos):
         self.rect_list[index].topleft = pos
+
+        self.bg_surfs[index].fill('black')
+        self.bg_surfs[index].set_alpha(25)
+
         surface.blit(self.bg_surfs[index], self.rect_list[index].topleft)
+        surface.blit(self.text_surfs[index], self.rect_list[index].topleft)
 
     def generate_surfs(self):
         self.text_surfs = []
@@ -35,12 +40,8 @@ class Text(pygame.sprite.Sprite):
 
         for i, surf in enumerate(self.text_surfs):
             bg = pygame.surface.Surface((surf.get_width(), surf.get_height()))
-            bg.fill('black')
-            bg.set_alpha(120)
 
             self.bg_surfs.append(bg)
-
-            self.bg_surfs[i].blit(surf, (0,0))
 
 
 class Pokemon(pygame.sprite.Sprite):
