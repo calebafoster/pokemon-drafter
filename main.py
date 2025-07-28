@@ -53,7 +53,7 @@ class Game:
 
     def test_menu(self):
         if not self.choices:
-            self.create_choices(Pokemon, 4, self.pokelist)
+            self.create_choices(Pokemon, 6, self.pokelist)
             self.arrange_choices()
 
         for sprite in self.choices:

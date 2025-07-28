@@ -35,8 +35,8 @@ class Text(pygame.sprite.Sprite):
 
         for i, surf in enumerate(self.text_surfs):
             bg = pygame.surface.Surface((surf.get_width(), surf.get_height()))
-            bg.set_alpha(120)
             bg.fill('black')
+            bg.set_alpha(120)
 
             self.bg_surfs.append(bg)
 
