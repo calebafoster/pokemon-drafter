@@ -77,6 +77,9 @@ class Pokemon(pygame.sprite.Sprite):
         self.right_clicked = False
 
         self.text = Text(self.name, self.bst, self.types)
+        self.cycle_count = 0
+        self.cycle_index = 0
+        self.can_right_click = True
 
     def is_clicked(self):
         pos = pygame.mouse.get_pos()
@@ -94,7 +97,7 @@ class Pokemon(pygame.sprite.Sprite):
 
     def display_text(self, surface):
         if self.is_hovering():
-            self.text.draw_text(surface, 0, self.rect.topleft)
+            self.text.draw_text(surface, self.cycle_index, self.rect.topleft)
 
     def is_right_clicked(self):
         pos = pygame.mouse.get_pos()
@@ -107,8 +110,15 @@ class Pokemon(pygame.sprite.Sprite):
 
         if not pygame.mouse.get_pressed()[2]:
             self.right_clicked = False
+            self.can_right_click = True
 
         return action
+
+    def cycle_logic(self):
+        if self.is_right_clicked() and self.can_right_click:
+            self.cycle_count += 1
+            self.cycle_index = self.cycle_count % len(self.text.text_list)
+            self.can_right_click = False
 
     def is_hovering(self):
         pos = pygame.mouse.get_pos()
@@ -158,7 +168,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
     def update(self, dt):
-        pass
+        self.cycle_logic()
 
 if __name__ == '__main__':
     pikachoo = Pokemon('chikorita', (0,0))
