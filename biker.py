@@ -9,6 +9,7 @@ class Biker(pygame.sprite.Sprite):
         self.import_assets()
         self.image = self.images[self.frame_index]
         self.rect = self.image.get_rect(topleft = pos)
+        self.animation_speed = 7
 
     def import_assets(self):
         for i in range(4):
@@ -18,7 +19,7 @@ class Biker(pygame.sprite.Sprite):
 
     def animate(self, dt):
 
-        self.frame_index += 7 * dt
+        self.frame_index += self.animation_speed * dt
         if self.frame_index >= len(self.images):
             self.frame_index = 0
         

@@ -146,7 +146,7 @@ class Pokemon(pygame.sprite.Sprite):
         with open(f'pokemon/{self.name}.json', 'r') as f:
             self.poke_dict = json.load(f)
 
-        self.image_path = Path(f'images/{self.name}.png')
+        self.image_path = Path(f'images/pokemon/{self.name}.png')
 
         if self.image_path.is_file():
             self.image = pygame.image.load(self.image_path).convert_alpha()
@@ -162,7 +162,7 @@ class Pokemon(pygame.sprite.Sprite):
                 f.write(r.content)
             print(f'image download successful: {self.name}')
         else:
-            self.image_path = Path('images/missing.png')
+            self.image_path = Path('images/pokemon/missing.png')
             print('image download unsuccesful, replacing with missingno')
 
         self.image = pygame.image.load(self.image_path).convert_alpha()
