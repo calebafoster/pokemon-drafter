@@ -9,7 +9,7 @@ class Text(pygame.sprite.Sprite):
     def __init__(self, name, bst, types, size = 30):
         super().__init__()
 
-        self.font = pygame.font.Font(None, size)
+        self.font = pygame.font.Font('pixel-font.ttf', size)
         self.name = name.upper()
         self.bst = f'BST: {bst}'
         self.types = ' '.join(types).upper()
