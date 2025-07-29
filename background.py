@@ -12,7 +12,7 @@ class Backgrounds(pygame.sprite.Group):
 class Background(pygame.sprite.Sprite):
     def __init__(self, path, pos, groups):
         super().__init__(groups)
-        self.image = pygame.image.load(path)
+        self.image = pygame.image.load(path).convert()
         self.rect = self.image.get_rect(topleft = pos)
 
         self.default_pos = vector(self.rect.topleft)

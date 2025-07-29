@@ -24,7 +24,7 @@ class Game:
         self.choices = pygame.sprite.Group()
         self.team = pygame.sprite.Group()
 
-        self.pokemon = Pokemon('eevee', (0,0))
+        self.pokemon = Pokemon('scyther', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
 
         self.state = 'pokemon_picker'
