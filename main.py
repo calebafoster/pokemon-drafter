@@ -63,6 +63,8 @@ class Game:
             if sprite.is_clicked() and self.can_choose:
                 self.can_choose = False
                 self.team.add(sprite)
+                for mon in self.team.sprites():
+                    print(mon.name)
                 self.choices.empty()
 
     def choice_sanity(self):
