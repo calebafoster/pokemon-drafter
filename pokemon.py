@@ -6,7 +6,7 @@ import requests
 import random
 
 class Text(pygame.sprite.Sprite):
-    def __init__(self, name, bst, types, size = 30):
+    def __init__(self, name, bst, types, size = 25):
         super().__init__()
 
         self.font = pygame.font.Font('pixel-font.ttf', size)
@@ -38,7 +38,7 @@ class Text(pygame.sprite.Sprite):
             self.text_surfs.append(img)
             self.rect_list.append(rect)
 
-        for i, surf in enumerate(self.text_surfs):
+        for surf in self.text_surfs:
             bg = pygame.surface.Surface((surf.get_width(), surf.get_height()))
 
             self.bg_surfs.append(bg)
