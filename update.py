@@ -5,7 +5,8 @@ from time import sleep
 from pathlib import Path
 
 def create_list():
-    r = requests.get('https://pokeapi.co/api/v2/pokemon/?limit=10000')
+    r = requests.get('https://pokeapi.co/api/v2/pokemon-species/?limit=10000')
+    print(r)
     my_dict = r.json()
     m = requests.get('https://pokeapi.co/api/v2/move/?limit=10000')
     move_dict = m.json()
@@ -16,8 +17,8 @@ def create_list():
     with open('movelist.json', 'w') as f:
         json.dump(move_dict['results'], f, indent=4)
 
-def get_list():
-    with open('pokelist.json', 'r') as f:
+def get_json(path):
+    with open(path, 'r') as f:
         return json.load(f)
 
 def do_the_pokemon(path, p_list):
@@ -34,63 +35,102 @@ def do_the_pokemon(path, p_list):
         sleep(50 / 1000)
 
 def repair_pokemon(p_list):
+
     for pokemon in p_list:
         name = pokemon['name']
+        print(name)
+        species_url = pokemon['url']
 
         file_path = Path(f'pokemon/{name}.json')
         species_path = Path(f'pokemon/species/{name}.json')
-        
-        if file_path.is_file():
+
+        if species_path.is_file() and file_path.is_file():
             print(f'{name} already exists')
-            continue
+
         else:
-            try:
-                r = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
-                poke_dict = r.json()
+            if not species_path.is_file():
+                species_dict = requests.get(species_url).json()
+                id = species_dict['id']
+                mon = requests.get(f'https://pokeapi.co/api/v2/pokemon/{id}')
+                poke_dict = mon.json()
+
+                with open(species_path, 'w') as f:
+                    json.dump(species_dict, f, indent=4)
 
                 with open(file_path, 'w') as f:
                     json.dump(poke_dict, f, indent=4)
 
-                print(f'imported {name}')
-            except:
-                print(f'failed to find {name}')
+            else:
+                species_dict = get_json(species_path)
+                id = species_dict['id']
+                mon = requests.get(f'https//pokeapi.co/api/v2/pokemon/{id}')
+                poke_dict = mon.json()
 
-    for pokemon in p_list:
-        name = pokemon['name']
-        id = 0
-
-        with open(f'pokemon/{name}.json', 'r') as f:
-            j = json.load(f)
-            id = j['id']
-
-        file_path = Path(f'pokemon/{name}.json')
-        species_path = Path(f'pokemon/species/{name}.json')
-
-        if species_path.is_file():
-            print(f'{name} already exists')
-            continue
-        else:
-            try:
-                r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{name}')
-                poke_dict = r.json()
-
-                with open(species_path, 'w') as f:
+                with open(file_path, 'w') as f:
                     json.dump(poke_dict, f, indent=4)
 
-                print(f'imported {name}')
-            except:
-                print(f'failed to find {name}')
-                try:
-                    r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{id}')
-                    poke_dict = r.json()
+            
 
-                    with open(species_path, 'w') as f:
-                        json.dump(poke_dict, f, indent=4)
-
-                    print('imported via id')
-
-                except:
-                    break
+##    for pokemon in p_list:
+##        name = pokemon['name']
+##
+##        file_path = Path(f'pokemon/{name}.json')
+##        species_path = Path(f'pokemon/species/{name}.json')
+##        
+##        if file_path.is_file():
+##            print(f'{name} already exists')
+##            continue
+##        else:
+##            try:
+##                r = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
+##                poke_dict = r.json()
+##
+##                if poke_dict['id'] >= 10000:
+##                    break
+##
+##                with open(file_path, 'w') as f:
+##                    json.dump(poke_dict, f, indent=4)
+##
+##                print(f'imported {name}')
+##            except:
+##                print(f'failed to find {name}')
+##
+##    for pokemon in p_list:
+##        name = pokemon['name']
+##        id = 0
+##
+##        with open(f'pokemon/{name}.json', 'r') as f:
+##            j = json.load(f)
+##            id = j['id']
+##
+##        file_path = Path(f'pokemon/{name}.json')
+##        species_path = Path(f'pokemon/species/{name}.json')
+##
+##        if species_path.is_file():
+##            print(f'{name} already exists')
+##            continue
+##        else:
+##            try:
+##                r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{name}')
+##                poke_dict = r.json()
+##
+##                with open(species_path, 'w') as f:
+##                    json.dump(poke_dict, f, indent=4)
+##
+##                print(f'imported {name}')
+##            except:
+##                print(f'failed to find {name}')
+##                try:
+##                    r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{id}')
+##                    poke_dict = r.json()
+##
+##                    with open(species_path, 'w') as f:
+##                        json.dump(poke_dict, f, indent=4)
+##
+##                    print('imported via id')
+##
+##                except:
+##                    break
 
 if __name__ == "__main__":
     try:
@@ -110,4 +150,4 @@ if __name__ == "__main__":
 
     create_list()
 
-    repair_pokemon(get_list())
+    repair_pokemon(get_json('pokelist.json'))

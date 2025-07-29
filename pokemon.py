@@ -64,6 +64,7 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.move_list = self.poke_dict['moves']
         self.ability_list = self.poke_dict['abilities']
+        self.evo_chain = self.get_evo_chain()
 
         self.ability = None
 
@@ -81,6 +82,34 @@ class Pokemon(pygame.sprite.Sprite):
         self.cycle_index = 0
         self.can_right_click = True
 
+        self.determine_evolution()
+
+    def determine_evolution(self):
+        chain_link = self.find_link()
+
+        if chain_link:
+            random.shuffle(chain_link)
+            self.next_evo = chain_link[0]['species']['name']
+            print(self.next_evo)
+
+    def find_link(self):
+        
+        if self.name == self.evo_chain['species']['name'] and self.evo_chain['evolves_to']:
+            return self.evo_chain['evolves_to']
+
+        if not self.evo_chain['evolves_to']:
+            return []
+
+        for mon in self.evo_chain['evolves_to']:
+            if mon['species']['name'] == self.name:
+                return mon['evolves_to']
+
+        return []
+
+    def display_text(self, surface):
+        if self.is_hovering():
+            self.text.draw_text(surface, self.cycle_index, self.rect.topleft)
+
     def is_clicked(self):
         pos = pygame.mouse.get_pos()
         action = False
@@ -94,10 +123,6 @@ class Pokemon(pygame.sprite.Sprite):
             self.clicked = False
 
         return action
-
-    def display_text(self, surface):
-        if self.is_hovering():
-            self.text.draw_text(surface, self.cycle_index, self.rect.topleft)
 
     def is_right_clicked(self):
         pos = pygame.mouse.get_pos()
@@ -114,17 +139,17 @@ class Pokemon(pygame.sprite.Sprite):
 
         return action
 
-    def cycle_logic(self):
-        if self.is_right_clicked() and self.can_right_click:
-            self.cycle_count += 1
-            self.cycle_index = self.cycle_count % len(self.text.text_list)
-            self.can_right_click = False
-
     def is_hovering(self):
         pos = pygame.mouse.get_pos()
 
         if self.rect.collidepoint(pos):
             return True
+
+    def cycle_logic(self):
+        if self.is_right_clicked() and self.can_right_click:
+            self.cycle_count += 1
+            self.cycle_index = self.cycle_count % len(self.text.text_list)
+            self.can_right_click = False
 
     def set_ability(self):
         index = random.randint(0, len(self.ability_list)) - 1
@@ -142,9 +167,17 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.bst = count
 
+    def get_evo_chain(self):
+        r = requests.get(self.species_dict['evolution_chain']['url'])
+        evo_chain = r.json()
+        return evo_chain['chain']
+
     def import_assets(self):
         with open(f'pokemon/{self.name}.json', 'r') as f:
             self.poke_dict = json.load(f)
+
+        with open(f'pokemon/species/{self.name}.json', 'r') as f:
+            self.species_dict = json.load(f)
 
         self.image_path = Path(f'images/pokemon/{self.name}.png')
 

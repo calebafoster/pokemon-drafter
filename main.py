@@ -24,14 +24,12 @@ class Game:
         self.choices = pygame.sprite.Group()
         self.team = pygame.sprite.Group()
 
-        self.pokemon = Pokemon('miraidon', (0,0))
+        self.pokemon = Pokemon('eevee', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
 
         self.state = 'pokemon_picker'
 
         self.can_choose = False
-
-        self.dex_sanity()
 
     def dex_sanity(self):
         for i, poke in enumerate(self.pokelist):
@@ -75,7 +73,7 @@ class Game:
         self.choices.empty()
 
         for i in range(num):
-            rand = random.randint(0, self.dex_num)
+            rand = random.randint(0, len(self.pokelist)-1)
             current = lis[rand]
             name = current['name']
             self.choices.add(Product(name, (0,0)))
