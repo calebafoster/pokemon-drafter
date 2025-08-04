@@ -1,63 +1,63 @@
-[
+[ 
     {
         "name": "life-orb",
         "img": "images/items/life-orb.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem" 
     },
     {
         "name": "leftovers",
         "img": "images/items/leftovers.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "assault-vest",
         "img": "images/items/assault-vest.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "choice-specs",
         "img": "images/items/choice-specs.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "choice-scarf",
         "img": "images/items/choice-scarf.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "choice-band",
         "img": "images/items/choice-band.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "focus-sash",
         "img": "images/items/focus-sash.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "sitrus-berry",
         "img": "images/items/sitrus-berry.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "scope-lens",
         "img": "images/items/scope-lens.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "eviolite",
         "img": "images/items/eviolite.png",
         "more_info": {},
-        "class": HeldItem,
+        "class": "HeldItem"
     },
     {
         "name": "rare-candy",
@@ -66,7 +66,7 @@
         {
             "alias": "evolution-candy"
         },
-        "class": EvoCandy,
+        "class": "EvoCandy"
     },
     {
         "name": "hp-up",
@@ -75,7 +75,7 @@
         {
             "stat": "hp"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "protein",
@@ -84,7 +84,7 @@
         {
             "stat": "attack"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "iron",
@@ -93,7 +93,7 @@
         {
             "stat": "defense"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "calcium",
@@ -102,7 +102,7 @@
         {
             "stat": "special-attack"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "zinc",
@@ -111,7 +111,7 @@
         {
             "stat": "special-defense"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "carbos",
@@ -120,7 +120,7 @@
         {
             "stat": "speed"
         },
-        "class": Vitamin,
+        "class": "Vitamin"
     },
     {
         "name": "big-nugget",
@@ -129,7 +129,7 @@
         {
             "value": 100
         },
-        "class": SellItem,
+        "class": "SellItem"
     },
     {
         "name": "star-piece",
@@ -138,6 +138,6 @@
         {
             "value": 200
         },
-        "class": SellItem,
-    },
+        "class": "SellItem"
+    }
 ]
