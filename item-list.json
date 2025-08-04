@@ -1,4 +1,10 @@
-[ 
+[
+    {
+        "name": "poke-ball",
+        "img": "images/items/poke-ball.png",
+        "more_info": {},
+        "class": "Item" 
+    },
     {
         "name": "life-orb",
         "img": "images/items/life-orb.png",
