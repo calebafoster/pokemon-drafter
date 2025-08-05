@@ -46,42 +46,42 @@ class Pokemon(pygame.sprite.Sprite):
     def __init__(self, name, pos, nickname = ''):
         super().__init__()
 
-        self.name = name
+        self.name = name   ## evo
         self.nickname = nickname
         
         self.import_assets()
-        self.image = pygame.transform.scale_by(self.image, 2)
+        self.image = pygame.transform.scale_by(self.image, 2)   ## evo
         self.rect = self.image.get_rect(topleft = pos)
 
         self.pos = vector(self.rect.topleft)
 
-        self.types = []
-        self.bst = 0
-        self.stage = 0
-        self.can_evolve = False
+        self.types = []   ## evo
+        self.bst = 0   ## evo
+        self.stage = 0   ## evo
+        self.can_evolve = False   ## evo
         self.held_item = None
 
-        self.move_list = self.poke_dict['moves']
-        self.ability_list = self.poke_dict['abilities']
+        self.move_list = self.poke_dict['moves']   ## evo
+        self.ability_list = self.poke_dict['abilities']   ## evo
         self.evo_chain = self.get_evo_chain()
 
-        self.ability = None
+        self.ability = None   ## evo
 
-        self.get_types()
-        self.get_bst()
-        self.set_ability()
+        self.get_types()   ## evo
+        self.get_bst()   ## evo
+        self.set_ability()   ## evo
 
-        self.moves = []
+        self.moves = []   ## evo
 
         self.clicked = False
         self.right_clicked = False
 
-        self.text = Text(self.name, self.bst, self.types)
+        self.text = Text(self.name, self.bst, self.types)   ## evo
         self.cycle_count = 0
         self.cycle_index = 0
         self.can_right_click = True
 
-        self.determine_evolution()
+        self.determine_evolution()   ## evo
 
     def item_chance(self):
         floor = 200
@@ -100,6 +100,7 @@ class Pokemon(pygame.sprite.Sprite):
         if chain_link:
             random.shuffle(chain_link)
             self.next_evo = chain_link[0]['species']['name']
+            self.can_evolve = True
             print(self.next_evo)
 
     def find_link(self):
