@@ -83,6 +83,21 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.determine_evolution()   ## evo
 
+    def force_evolve(self):
+        self.name = self.next_evo
+        self.import_assets()
+        self.image = pygame.transform.scale_by(self.image, 2)
+
+        self.ability_list = self.poke_dict['abilities']
+
+        self.get_types()
+        self.get_bst()
+        self.set_ability()
+
+        self.text = Text(self.name, self.bst, self.types)
+
+        self.determine_evolution()
+
     def item_chance(self):
         floor = 200
         ceiling = 625 - floor
@@ -162,6 +177,11 @@ class Pokemon(pygame.sprite.Sprite):
             self.cycle_index = self.cycle_count % len(self.text.text_list)
             self.can_right_click = False
 
+    def test_evo(self):
+        if self.is_right_clicked() and self.can_right_click:
+            self.force_evolve()
+            self.can_right_click = False
+
     def set_ability(self):
         index = random.randint(0, len(self.ability_list)) - 1
         self.ability = self.ability_list[index]
@@ -219,7 +239,8 @@ class Pokemon(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.display_item()
-        self.cycle_logic()
+        self.test_evo()
+        ##self.cycle_logic()
 
 if __name__ == '__main__':
     pikachoo = Pokemon('chikorita', (0,0))
