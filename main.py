@@ -37,7 +37,7 @@ class Game:
 
         self.choice_num = 4
         self.points = 1500
-        self.items_revealed = False
+        self.items_revealed = True
 
         self.item_effected_vars = {"choice_num": self.choice_num, 
                                    "points": self.points, 
@@ -113,7 +113,7 @@ class Game:
         self.choices.empty()
 
         for i in range(num):
-            rand = random.randint(0, len(self.pokelist)-1)
+            rand = random.randint(0, len(self.pokelist) - 1)
             current = lis[rand]
             name = current['name']
             self.choices.add(Product(name, (0,0)))
