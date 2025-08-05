@@ -7,6 +7,20 @@
         "class": "Item"
     },
     {
+        "name": "kings-rock",
+        "img": "images/items/kings-rock.png",
+        "cost": 100,
+        "more_info": {},
+        "class": "HeldItem"
+    },
+    {
+        "name": "air-balloon",
+        "img": "images/items/air-balloon.png",
+        "cost": 100,
+        "more_info": {},
+        "class": "HeldItem"
+    },
+    {
         "name": "life-orb",
         "img": "images/items/life-orb.png",
         "cost": 100,
