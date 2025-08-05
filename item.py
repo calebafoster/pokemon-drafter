@@ -55,3 +55,29 @@ class SellItem(Item):
         super().__init__(item_dict)
 
         self.value = item_dict['more_info']['value']
+
+    def on_pickup(self, item_effected_vars):
+        item_effected_vars['points'] += self.value
+        self.kill()
+
+
+class RevealGlass(Item):
+    def __init__(self, item_dict):
+        super().__init__(item_dict)
+
+    def on_pickup(self, item_effected_vars):
+        item_effected_vars['revealed'] = True
+
+    def hidden_logic(self):
+        self.image = self.images[0]
+
+
+class OptionExpander(Item):
+    def __init__(self, item_dict):
+        super().__init__(item_dict)
+
+        self.name = item_dict['more_info']['alias']
+
+    def on_pickup(self, item_effected_vars):
+        item_effected_vars['choice_num'] += 1
+        self.kill()

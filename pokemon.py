@@ -37,9 +37,7 @@ class Text(pygame.sprite.Sprite):
             rect = img.get_rect()
             self.text_surfs.append(img)
             self.rect_list.append(rect)
-
-        for surf in self.text_surfs:
-            bg = pygame.surface.Surface((surf.get_width(), surf.get_height()))
+            bg = pygame.surface.Surface((img.get_width(), img.get_height()))
 
             self.bg_surfs.append(bg)
 
@@ -61,6 +59,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.bst = 0
         self.stage = 0
         self.can_evolve = False
+        self.held_item = None
 
         self.move_list = self.poke_dict['moves']
         self.ability_list = self.poke_dict['abilities']
@@ -83,6 +82,17 @@ class Pokemon(pygame.sprite.Sprite):
         self.can_right_click = True
 
         self.determine_evolution()
+
+    def item_chance(self):
+        floor = 200
+        ceiling = 625 - floor
+        temp_bst = self.bst - floor if self.bst - floor > 0 else 0
+        chance_not = temp_bst / ceiling
+        chance = 1 - chance_not
+        return chance
+
+    def hold_item(self, item_obj):
+        self.held_item = item_obj
 
     def determine_evolution(self):
         chain_link = self.find_link()
@@ -200,7 +210,14 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
+    def display_item(self):
+        if self.held_item:
+            self.held_item.update()
+            self.held_item.rect.bottomright = (self.image.get_width(), self.image.get_height())
+            self.image.blit(self.held_item.image, self.held_item.rect.topleft)
+
     def update(self, dt):
+        self.display_item()
         self.cycle_logic()
 
 if __name__ == '__main__':

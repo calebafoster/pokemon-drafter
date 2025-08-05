@@ -12,6 +12,12 @@
         "class": "HeldItem" 
     },
     {
+        "name": "weakness-policy",
+        "img": "images/items/weakness-policy.png",
+        "more_info": {},
+        "class": "HeldItem" 
+    },
+    {
         "name": "leftovers",
         "img": "images/items/leftovers.png",
         "more_info": {},
@@ -73,6 +79,21 @@
             "alias": "evolution-candy"
         },
         "class": "EvoCandy"
+    },
+    {
+        "name": "burn-drive",
+        "img": "images/items/option-expander.png",
+        "more_info": 
+        {
+            "alias": "option-expander"
+        },
+        "class": "OptionExpander"
+    },
+    {
+        "name": "reveal-glass",
+        "img": "images/items/reveal-glass.png",
+        "more_info": {},
+        "class": "RevealGlass"
     },
     {
         "name": "hp-up",
