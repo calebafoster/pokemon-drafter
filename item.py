@@ -68,6 +68,7 @@ class RevealGlass(Item):
 
     def on_pickup(self, item_effected_vars):
         item_effected_vars['revealed'] = True
+        self.kill()
 
     def hidden_logic(self):
         self.image = self.images[0]
