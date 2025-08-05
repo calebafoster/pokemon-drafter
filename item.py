@@ -11,6 +11,7 @@ class Item(pygame.sprite.Sprite):
 
         self.name = item_dict['name']
         self.path = Path(item_dict['img'])
+        self.cost = item_dict['cost']
 
         self.import_assets()
         self.rect = self.images[0].get_rect(topleft = pos)

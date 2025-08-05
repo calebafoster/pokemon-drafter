@@ -2,78 +2,91 @@
     {
         "name": "poke-ball",
         "img": "images/items/poke-ball.png",
+        "cost": 100,
         "more_info": {},
         "class": "Item"
     },
     {
         "name": "life-orb",
         "img": "images/items/life-orb.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem" 
     },
     {
         "name": "weakness-policy",
         "img": "images/items/weakness-policy.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem" 
     },
     {
         "name": "leftovers",
         "img": "images/items/leftovers.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "assault-vest",
         "img": "images/items/assault-vest.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "choice-specs",
         "img": "images/items/choice-specs.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "choice-scarf",
         "img": "images/items/choice-scarf.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "choice-band",
         "img": "images/items/choice-band.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "focus-sash",
         "img": "images/items/focus-sash.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "sitrus-berry",
         "img": "images/items/sitrus-berry.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "scope-lens",
         "img": "images/items/scope-lens.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "eviolite",
         "img": "images/items/eviolite.png",
+        "cost": 100,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "rare-candy",
         "img": "images/items/evolution-candy.png",
+        "cost": 100,
         "more_info": 
         {
             "alias": "evolution-candy"
@@ -83,6 +96,7 @@
     {
         "name": "burn-drive",
         "img": "images/items/option-expander.png",
+        "cost": 100,
         "more_info": 
         {
             "alias": "option-expander"
@@ -92,12 +106,14 @@
     {
         "name": "reveal-glass",
         "img": "images/items/reveal-glass.png",
+        "cost": 100,
         "more_info": {},
         "class": "RevealGlass"
     },
     {
         "name": "hp-up",
         "img": "images/items/hp-up.png",
+        "cost": 100,
         "more_info": 
         {
             "stat": "hp"
@@ -107,6 +123,7 @@
     {
         "name": "protein",
         "img": "images/items/protein.png",
+        "cost": 100,
         "more_info":
         {
             "stat": "attack"
@@ -116,6 +133,7 @@
     {
         "name": "iron",
         "img": "images/items/iron.png",
+        "cost": 100,
         "more_info":
         {
             "stat": "defense"
@@ -125,6 +143,7 @@
     {
         "name": "calcium",
         "img": "images/items/calcium.png",
+        "cost": 100,
         "more_info":
         {
             "stat": "special-attack"
@@ -134,6 +153,7 @@
     {
         "name": "zinc",
         "img": "images/items/zinc.png",
+        "cost": 100,
         "more_info":
         {
             "stat": "special-defense"
@@ -143,6 +163,7 @@
     {
         "name": "carbos",
         "img": "images/items/carbos.png",
+        "cost": 100,
         "more_info":
         {
             "stat": "speed"
@@ -152,6 +173,7 @@
     {
         "name": "big-nugget",
         "img": "images/items/big-nugget.png",
+        "cost": 100,
         "more_info": 
         {
             "value": 100
@@ -161,6 +183,7 @@
     {
         "name": "star-piece",
         "img": "images/items/star-piece.png",
+        "cost": 100,
         "more_info": 
         {
             "value": 200

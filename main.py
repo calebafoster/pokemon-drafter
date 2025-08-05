@@ -26,7 +26,7 @@ class Game:
         self.background2 = Background('wallpaper.jpg', (1280 - self.background.image.get_width(), 0), self.backgrounds)
         self.choices = pygame.sprite.Group()
         self.bag = pygame.sprite.Group()
-        self.team = pygame.sprite.Group()
+        self.box = pygame.sprite.Group()
 
         self.pokemon = Pokemon('scyther', (0,0))
         self.biker = Biker((100,360), self.backgrounds)
@@ -87,9 +87,9 @@ class Game:
                     self.acquire_item(sprite.held_item)
                     sprite.held_item = None
 
-                self.team.add(sprite)
+                self.box.add(sprite)
 
-                for mon in self.team.sprites():
+                for mon in self.box.sprites():
                     print(mon.name)
 
                 self.choices.empty()
