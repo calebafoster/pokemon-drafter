@@ -63,6 +63,7 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.move_list = self.poke_dict['moves']   ## evo
         self.ability_list = self.poke_dict['abilities']   ## evo
+        self.next_evo = ''
         self.evo_chain = self.get_evo_chain()
 
         self.ability = None   ## evo
@@ -178,7 +179,7 @@ class Pokemon(pygame.sprite.Sprite):
             self.can_right_click = False
 
     def test_evo(self):
-        if self.is_right_clicked() and self.can_right_click:
+        if self.is_right_clicked() and self.can_right_click and self.next_evo:
             self.force_evolve()
             self.can_right_click = False
 
@@ -187,8 +188,11 @@ class Pokemon(pygame.sprite.Sprite):
         self.ability = self.ability_list[index]
 
     def get_types(self):
+        working = []
         for poke_type in self.poke_dict['types']:
-            self.types.append(poke_type['type']['name'])
+            working.append(poke_type['type']['name'])
+
+        self.types = working
 
     def get_bst(self):
         count = 0
