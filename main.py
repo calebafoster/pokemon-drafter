@@ -97,7 +97,7 @@ class Game:
 
                 self.pokemon_choices.empty()
 
-    def items_draft(self):
+    def item_draft(self):
         if not self.item_choices:
             self.create_items(6)
             self.item_choices.update()
@@ -107,6 +107,10 @@ class Game:
         self.item_choices.draw(self.display_surface)
 
         for sprite in self.item_choices.sprites():
+
+            if sprite.is_hovering():
+                sprite.text.rect.midtop = sprite.rect.midbottom
+                self.display_surface.blit(sprite.text.image, sprite.text.rect.topleft)
             
             if sprite.is_clicked() and self.can_choose:
                 self.can_choose = False
@@ -189,7 +193,7 @@ class Game:
             elif self.state == 'pokemon_draft':
                 self.pokemon_draft(dt)
             elif self.state == 'item_draft':
-                self.items_draft()
+                self.item_draft()
 
             pygame.display.update()
 

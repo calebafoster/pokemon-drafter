@@ -5,6 +5,23 @@ from pathlib import Path
 ## Logic for Item use will live here and the handler (Bag)
 ## Logic for holding items will live with the pokemon and the handler
 
+class Text(pygame.sprite.Sprite):
+    def __init__(self, text, size=22):
+        super().__init__()
+
+        if '-' in text:
+            self.text = text.split('-')
+            self.text = ' '.join(self.text)
+            self.text = self.text.upper()
+        else:
+            self.text = text.upper()
+
+        self.font = pygame.font.Font('pixel-font.ttf', size)
+
+        self.image = self.font.render(self.text, True, 'black')
+        self.rect = self.image.get_rect()
+
+
 class Item(pygame.sprite.Sprite):
     def __init__(self, item_dict, pos = (0,0)):
         super().__init__()
@@ -20,6 +37,8 @@ class Item(pygame.sprite.Sprite):
 
         self.is_hidden = False
         self.is_big = False
+
+        self.text = Text(self.name)
 
     def import_assets(self):
         self.images = []
@@ -102,6 +121,7 @@ class EvoCandy(Item):
         super().__init__(item_dict)
 
         self.name = item_dict['more_info']['alias']
+        self.text = Text(self.name)
 
 
 class SellItem(Item):
@@ -132,6 +152,7 @@ class OptionExpander(Item):
         super().__init__(item_dict)
 
         self.name = item_dict['more_info']['alias']
+        self.text = Text(self.name)
 
     def on_pickup(self, item_effected_vars):
         item_effected_vars['choice_num'] += 1
