@@ -31,13 +31,13 @@ class Game:
 
         self.biker = Biker((100,360), self.backgrounds)
 
-        self.state = 'main_menu'
+        self.state = 'item_draft'
 
         self.can_choose = False
 
         self.choice_num = 4
         self.points = 1500
-        self.items_revealed = True
+        self.items_revealed = False
 
         self.item_effected_vars = {"choice_num": self.choice_num, 
                                    "points": self.points, 
@@ -65,15 +65,15 @@ class Game:
         for mon in self.pokemon_choices:
             chance = mon.item_chance()
             if random.random() < chance:
-                index = random.randint(1, len(self.item_list) - 1)
+                index = random.randint(0, len(self.item_list) - 1)
                 new_item = eval(self.item_list[index]['class'])(self.item_list[index])
                 new_item.is_hidden = not self.items_revealed
                 mon.hold_item(new_item)
 
     def pokemon_draft(self, dt):
         if not self.pokemon_choices:
-            self.create_choices(Pokemon, self.choice_num, self.pokelist)
-            self.arrange_choices()
+            self.create_pokemon(Pokemon, self.choice_num, self.pokelist)
+            self.arrange_options(self.pokemon_choices)
             self.item_smuggling()
 
         self.pokemon_choices.update(dt)
@@ -98,7 +98,24 @@ class Game:
                 self.pokemon_choices.empty()
 
     def items_draft(self):
-        pass
+        if not self.item_choices:
+            self.create_items(6)
+            self.item_choices.update()
+            self.arrange_options(self.item_choices)
+
+        self.item_choices.update()
+        self.item_choices.draw(self.display_surface)
+
+        for sprite in self.item_choices.sprites():
+            
+            if sprite.is_clicked() and self.can_choose:
+                self.can_choose = False
+
+                self.acquire_item(sprite)
+
+                self.item_choices.empty()
+
+                self.state = 'pokemon_draft'
 
     def acquire_item(self, item):
         if hasattr(item, 'on_pickup'):
@@ -115,7 +132,7 @@ class Game:
         if not pygame.mouse.get_pressed()[0]:
             self.can_choose = True
 
-    def create_choices(self, Product, num, lis):
+    def create_pokemon(self, Product, num, lis):
         self.pokemon_choices.empty()
 
         for i in range(num):
@@ -124,19 +141,32 @@ class Game:
             name = current['name']
             self.pokemon_choices.add(Product(name, (0,0)))
 
-    def arrange_choices(self):
+    def create_items(self, num):
+        self.item_choices.empty()
+        item_list = self.item_list
+
+        random.shuffle(item_list)
+
+        for i in range(num):
+            item_dict = item_list[i]
+            new_item = eval(item_dict['class'])(item_dict)
+            new_item.is_hidden = False
+            new_item.is_big = True
+            self.item_choices.add(new_item)
+
+    def arrange_options(self, group):
         current_pos = vector(0,0)
         right_x = 0
-        iteration = 1280 / len(self.pokemon_choices)
+        iteration = 1280 / len(group)
 
-        for opt in self.pokemon_choices.sprites():
+        for opt in group.sprites():
             opt.rect.topleft = current_pos
             current_pos.x += iteration
             right_x = opt.rect.right
 
         offset = (1280 - right_x) / 2
 
-        for opt in self.pokemon_choices.sprites():
+        for opt in group.sprites():
             opt.rect.x += offset
 
     def run(self):
@@ -158,6 +188,8 @@ class Game:
                 pass
             elif self.state == 'pokemon_draft':
                 self.pokemon_draft(dt)
+            elif self.state == 'item_draft':
+                self.items_draft()
 
             pygame.display.update()
 

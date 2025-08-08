@@ -19,17 +19,70 @@ class Item(pygame.sprite.Sprite):
         self.held_by = None
 
         self.is_hidden = False
+        self.is_big = False
 
     def import_assets(self):
         self.images = []
-        self.images.append(pygame.image.load(self.path).convert_alpha())
-        self.images.append(pygame.image.load('images/items/poke-ball.png').convert_alpha())
+        self.rects = []
 
-    def hidden_logic(self):
+        self.images.append(pygame.image.load(self.path).convert_alpha())
+        self.rects.append(self.images[0].get_rect(topleft = (0,0)))
+
+        self.images.append(pygame.image.load('images/items/poke-ball.png').convert_alpha())
+        self.rects.append(self.images[1].get_rect(topleft = (0,0)))
+
+        self.images.append(pygame.transform.scale_by(self.images[0], 3))
+        self.rects.append(self.images[2].get_rect(topleft = (0,0)))
+
+    def image_logic(self):
         self.image = self.images[self.is_hidden]
+        if self.is_hidden:
+            self.image = self.images[1]
+            self.rect = self.rects[1]
+        elif self.is_big:
+            self.image = self.images[2]
+            self.rect = self.rects[2]
+        else:
+            self.image = self.images[0]
+            self.rect = self.rects[0]
+
+    def is_clicked(self):
+        pos = pygame.mouse.get_pos()
+        action = False
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0] and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if not pygame.mouse.get_pressed()[0]:
+            self.clicked = False
+
+        return action
+
+    def is_right_clicked(self):
+        pos = pygame.mouse.get_pos()
+        action = False
+
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[2] and not self.right_clicked:
+                self.right_clicked = True
+                action = True
+
+        if not pygame.mouse.get_pressed()[2]:
+            self.right_clicked = False
+            self.can_right_click = True
+
+        return action
+
+    def is_hovering(self):
+        pos = pygame.mouse.get_pos()
+
+        if self.rect.collidepoint(pos):
+            return True
 
     def update(self):
-        self.hidden_logic()
+        self.image_logic()
 
 
 class HeldItem(Item):

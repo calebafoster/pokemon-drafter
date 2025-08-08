@@ -1,12 +1,5 @@
 [
     {
-        "name": "poke-ball",
-        "img": "images/items/poke-ball.png",
-        "cost": 100,
-        "more_info": {},
-        "class": "Item"
-    },
-    {
         "name": "kings-rock",
         "img": "images/items/kings-rock.png",
         "cost": 100,

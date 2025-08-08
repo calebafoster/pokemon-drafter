@@ -243,8 +243,8 @@ class Pokemon(pygame.sprite.Sprite):
 
     def update(self, dt):
         self.display_item()
-        self.test_evo()
-        ##self.cycle_logic()
+        ##self.test_evo()
+        self.cycle_logic()
 
 if __name__ == '__main__':
     pikachoo = Pokemon('chikorita', (0,0))
