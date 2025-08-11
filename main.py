@@ -1,5 +1,5 @@
 import pygame
-import sys
+import sys 
 from pokemon import Pokemon
 from biker import Biker
 from button import Button
@@ -8,7 +8,6 @@ import json
 from background import Background, Backgrounds
 from pygame.math import Vector2 as vector
 from item import *
-
 class Points(pygame.sprite.Sprite):
     def __init__(self, points, pos, size=35):
         self.font = pygame.font.Font('pixel-font.ttf', size=size)
@@ -48,6 +47,10 @@ class Game:
         self.main_button.rect.midbottom = (int(self.width / 2), self.height - 10)
         self.mb_pos = self.main_button.rect.topleft
 
+        self.item_effected_vars = {"choice_num": 4, 
+                                   "points": 999999, 
+                                   "revealed": False}
+
         self.drafter_button = Button("Drafter", self.buttons)
         self.drafter_button.rect.bottomleft = (10, self.height - 10)
         self.db_pos = self.drafter_button.rect.topleft
@@ -59,17 +62,10 @@ class Game:
 
         self.can_choose = False
 
-        self.choice_num = 4
-        self.points = 2500
-        self.items_revealed = False
-
-        self.point_tracker = Points(self.points, (self.width, self.height / 2))
+        self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2))
 
         self.items_picked = 0
 
-        self.item_effected_vars = {"choice_num": self.choice_num, 
-                                   "points": self.points, 
-                                   "revealed": self.items_revealed}
 
     def dex_sanity(self):
         for i, poke in enumerate(self.pokelist):
@@ -95,7 +91,7 @@ class Game:
             if random.random() < chance:
                 index = random.randint(0, len(self.item_list) - 1)
                 new_item = eval(self.item_list[index]['class'])(self.item_list[index])
-                new_item.is_hidden = not self.items_revealed
+                new_item.is_hidden = not self.item_effected_vars['revealed']
                 mon.hold_item(new_item)
 
     def state_sanity(self):
@@ -113,7 +109,7 @@ class Game:
 
     def pokemon_draft(self, dt):
         if not self.pokemon_choices:
-            self.create_pokemon(Pokemon, self.choice_num, self.pokelist)
+            self.create_pokemon(Pokemon, self.item_effected_vars['choice_num'], self.pokelist)
             self.arrange_options(self.pokemon_choices)
             self.item_smuggling()
 
@@ -125,11 +121,11 @@ class Game:
 
             self.display_text()
 
-            if sprite.is_clicked() and self.can_choose and self.points > sprite.bst:
+            if sprite.is_clicked() and self.can_choose and self.item_effected_vars['points'] > sprite.bst:
                 self.can_choose = False
 
-                self.points -= sprite.bst
-                self.point_tracker.update(self.points)
+                self.item_effected_vars['points'] -= sprite.bst
+                self.point_tracker.update(self.item_effected_vars['points'])
 
                 if sprite.held_item:
                     self.acquire_item(sprite.held_item)
@@ -181,9 +177,6 @@ class Game:
         if hasattr(item, 'on_pickup'):
             item.on_pickup(self.item_effected_vars)
             print(self.item_effected_vars)
-            self.choice_num = self.item_effected_vars['choice_num']
-            self.points = self.item_effected_vars['points']
-            self.items_revealed = self.item_effected_vars['revealed']
 
         else:
             self.bag.add(item)
@@ -241,10 +234,11 @@ class Game:
 
             self.backgrounds.update(dt)
 
-
             self.left_click_sanity()
             self.backgrounds.draw(self.display_surface)
             self.buttons.draw(self.display_surface)
+
+            self.point_tracker.update(self.item_effected_vars['points'])
             self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
             
             self.state_sanity()

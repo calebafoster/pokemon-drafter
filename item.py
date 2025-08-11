@@ -148,6 +148,18 @@ class RevealGlass(Item):
     def hidden_logic(self):
         self.image = self.images[0]
 
+    def image_logic(self):
+        self.image = self.images[self.is_hidden]
+        if self.is_hidden:
+            self.image = self.images[0]
+            self.rect = self.rects[0]
+        elif self.is_big:
+            self.image = self.images[2]
+            self.rect = self.rects[2]
+        else:
+            self.image = self.images[0]
+            self.rect = self.rects[0]
+
 
 class OptionExpander(Item):
     def __init__(self, item_dict):
