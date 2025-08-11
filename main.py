@@ -48,7 +48,7 @@ class Game:
         self.mb_pos = self.main_button.rect.topleft
 
         self.item_effected_vars = {"choice_num": 4, 
-                                   "points": 999999, 
+                                   "points": 500, 
                                    "revealed": False}
 
         self.drafter_button = Button("Drafter", self.buttons)
@@ -120,6 +120,9 @@ class Game:
         for sprite in self.pokemon_choices:
 
             self.display_text()
+
+            if sprite.bst > self.item_effected_vars['points']:
+                sprite.set_cant_afford()
 
             if sprite.is_clicked() and self.can_choose and self.item_effected_vars['points'] > sprite.bst:
                 self.can_choose = False

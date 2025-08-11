@@ -4,7 +4,6 @@ from pathlib import Path
 from pygame import Vector2 as vector
 import requests
 import random
-
 class Text(pygame.sprite.Sprite):
     def __init__(self, name, bst, types, size = 25):
         super().__init__()
@@ -81,6 +80,8 @@ class Pokemon(pygame.sprite.Sprite):
         self.cycle_index = 0
         self.can_right_click = True
 
+        self.can_afford = True
+
         self.determine_evolution()   ## evo
 
     def force_evolve(self):
@@ -97,6 +98,18 @@ class Pokemon(pygame.sprite.Sprite):
         self.text = Text(self.name, self.bst, self.types)
 
         self.determine_evolution()
+
+    def set_cant_afford(self):
+        if self.can_afford:
+            mask = pygame.mask.from_surface(self.image)
+            white_surf = mask.to_surface()
+            white_surf.set_colorkey('white')
+            self.image = white_surf
+            mask = pygame.mask.from_surface(self.image)
+            white_surf = mask.to_surface()
+            white_surf.set_colorkey('white')
+            self.image = white_surf
+            self.can_afford = False
 
     def item_chance(self):
         floor = 200
