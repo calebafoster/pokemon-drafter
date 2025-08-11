@@ -64,7 +64,6 @@ class Pokemon(pygame.sprite.Sprite):
         self.move_list = self.poke_dict['moves']   ## evo
         self.ability_list = self.poke_dict['abilities']   ## evo
         self.next_evo = ''
-        self.evo_chain = self.get_evo_chain()
 
         self.ability = None   ## evo
 
@@ -213,6 +212,10 @@ class Pokemon(pygame.sprite.Sprite):
 
         with open(f'pokemon/species/{self.name}.json', 'r') as f:
             self.species_dict = json.load(f)
+
+        with open(f'pokemon/evos/{self.name}.json', 'r') as f:
+            evo_chain = json.load(f)
+            self.evo_chain = evo_chain['chain']
 
         self.image_path = Path(f'images/pokemon/{self.name}.png')
 

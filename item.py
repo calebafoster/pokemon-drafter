@@ -39,6 +39,8 @@ class Item(pygame.sprite.Sprite):
         self.is_big = False
 
         self.text = Text(self.name)
+        
+        self.clicked = False
 
     def import_assets(self):
         self.images = []

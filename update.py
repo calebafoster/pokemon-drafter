@@ -69,69 +69,36 @@ def repair_pokemon(p_list):
                 with open(file_path, 'w') as f:
                     json.dump(poke_dict, f, indent=4)
 
+def get_evo_chains(p_list):
+    
+    for mon in p_list:
+        name = mon['name']
+
+        file_path = Path(f'pokemon/species/{name}.json')
+        dest_path = Path(f'pokemon/evos/{name}.json')
+
+        if not dest_path.is_file():
+
+
+            mon_dict = {}
+
+            with open(file_path, 'r') as f:
+                mon_dict = json.load(f)
+
+            chain_url = mon_dict['evolution_chain']['url']
+
+            r = requests.get(chain_url)
+            evo_chain = r.json()
+
+            with open(dest_path, 'w') as f:
+                json.dump(evo_chain, f, indent=4)
+
+            print(f'{name} evo chain dumped')
+
+        else:
+            print('evo already exists')
+
             
-
-##    for pokemon in p_list:
-##        name = pokemon['name']
-##
-##        file_path = Path(f'pokemon/{name}.json')
-##        species_path = Path(f'pokemon/species/{name}.json')
-##        
-##        if file_path.is_file():
-##            print(f'{name} already exists')
-##            continue
-##        else:
-##            try:
-##                r = requests.get(f'https://pokeapi.co/api/v2/pokemon/{name}')
-##                poke_dict = r.json()
-##
-##                if poke_dict['id'] >= 10000:
-##                    break
-##
-##                with open(file_path, 'w') as f:
-##                    json.dump(poke_dict, f, indent=4)
-##
-##                print(f'imported {name}')
-##            except:
-##                print(f'failed to find {name}')
-##
-##    for pokemon in p_list:
-##        name = pokemon['name']
-##        id = 0
-##
-##        with open(f'pokemon/{name}.json', 'r') as f:
-##            j = json.load(f)
-##            id = j['id']
-##
-##        file_path = Path(f'pokemon/{name}.json')
-##        species_path = Path(f'pokemon/species/{name}.json')
-##
-##        if species_path.is_file():
-##            print(f'{name} already exists')
-##            continue
-##        else:
-##            try:
-##                r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{name}')
-##                poke_dict = r.json()
-##
-##                with open(species_path, 'w') as f:
-##                    json.dump(poke_dict, f, indent=4)
-##
-##                print(f'imported {name}')
-##            except:
-##                print(f'failed to find {name}')
-##                try:
-##                    r = requests.get(f'https://pokeapi.co/api/v2/pokemon-species/{id}')
-##                    poke_dict = r.json()
-##
-##                    with open(species_path, 'w') as f:
-##                        json.dump(poke_dict, f, indent=4)
-##
-##                    print('imported via id')
-##
-##                except:
-##                    break
-
 if __name__ == "__main__":
     try:
         os.mkdir('pokemon')
@@ -151,3 +118,5 @@ if __name__ == "__main__":
     create_list()
 
     repair_pokemon(get_json('pokelist.json'))
+
+    get_evo_chains(get_json('pokelist.json'))
