@@ -190,7 +190,7 @@
     {
         "name": "star-piece",
         "img": "images/items/star-piece.png",
-        "cost": 100,
+        "cost": 200,
         "more_info": 
         {
             "value": 200

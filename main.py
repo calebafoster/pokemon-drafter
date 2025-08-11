@@ -8,6 +8,7 @@ import json
 from background import Background, Backgrounds
 from pygame.math import Vector2 as vector
 from item import *
+
 class Points(pygame.sprite.Sprite):
     def __init__(self, points, pos, size=35):
         self.font = pygame.font.Font('pixel-font.ttf', size=size)
@@ -48,7 +49,7 @@ class Game:
         self.mb_pos = self.main_button.rect.topleft
 
         self.item_effected_vars = {"choice_num": 4, 
-                                   "points": 500, 
+                                   "points": 2000, 
                                    "revealed": False}
 
         self.drafter_button = Button("Drafter", self.buttons)
@@ -65,7 +66,6 @@ class Game:
         self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2))
 
         self.items_picked = 0
-
 
     def dex_sanity(self):
         for i, poke in enumerate(self.pokelist):
@@ -95,16 +95,18 @@ class Game:
                 mon.hold_item(new_item)
 
     def state_sanity(self):
-        if self.state == 'pokemon_draft':
-            if self.items_picked <= len(self.box) / 3:
-                self.state = 'item_draft'
 
         if self.main_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'main_menu'
+
         if self.drafter_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'pokemon_draft'
+
+        if self.state == 'pokemon_draft':
+            if self.items_picked <= len(self.box) / 3:
+                self.state = 'item_draft'
 
 
     def pokemon_draft(self, dt):
@@ -124,7 +126,7 @@ class Game:
             if sprite.bst > self.item_effected_vars['points']:
                 sprite.set_cant_afford()
 
-            if sprite.is_clicked() and self.can_choose and self.item_effected_vars['points'] > sprite.bst:
+            if sprite.is_clicked() and self.can_choose and self.item_effected_vars['points'] >= sprite.bst:
                 self.can_choose = False
 
                 self.item_effected_vars['points'] -= sprite.bst
@@ -236,12 +238,12 @@ class Game:
             dt = self.clock.tick() / 1000
 
             self.backgrounds.update(dt)
+            self.point_tracker.update(self.item_effected_vars['points'])
 
             self.left_click_sanity()
             self.backgrounds.draw(self.display_surface)
             self.buttons.draw(self.display_surface)
 
-            self.point_tracker.update(self.item_effected_vars['points'])
             self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
             
             self.state_sanity()
