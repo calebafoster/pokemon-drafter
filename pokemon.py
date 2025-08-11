@@ -32,7 +32,7 @@ class Text(pygame.sprite.Sprite):
 
         for txt in self.text_list:
             print(txt)
-            img = self.font.render(txt, True, 'white')
+            img = self.font.render(txt, False, 'white')
             rect = img.get_rect()
             self.text_surfs.append(img)
             self.rect_list.append(rect)
