@@ -24,7 +24,7 @@ class Points(pygame.sprite.Sprite):
 class Game:
     def __init__(self):
         pygame.init()
-        self.width = 1280
+        self.width = 1280 
         self.height = 720
         self.display_surface = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption('Pokemon Drafter')
@@ -39,6 +39,9 @@ class Game:
 
         self.background = Background('wallpaper.jpg', (self.width, 0), self.backgrounds)
         self.background2 = Background('wallpaper.jpg', (self.width - self.background.image.get_width(), 0), self.backgrounds)
+
+        self.gray_setup()
+
         self.pokemon_choices = pygame.sprite.Group()
         self.item_choices = pygame.sprite.Group()
         self.bag = pygame.sprite.Group()
@@ -46,7 +49,7 @@ class Game:
         self.buttons = pygame.sprite.Group()
 
         self.item_effected_vars = {"choice_num": 4, 
-                                   "points": 2000, 
+                                   "points": 2500, 
                                    "revealed": False}
 
         self.main_button = Button("Main Menu", self.buttons)
@@ -61,10 +64,6 @@ class Game:
         self.box_button.rect.bottomright = (self.width - 10, self.height - 10)
         self.box_button.default_pos = self.box_button.rect.topleft
 
-        self.bag_button = Button("Bag", self.buttons, size= 45)
-        self.bag_button.rect.bottomleft = (self.box_button.rect.x, self.box_button.rect.y - 10)
-        self.bag_button.default_pos = self.bag_button.rect.topleft
-
         self.biker = Biker((int(self.width / 3), 360), self.backgrounds)
 
         self.state = 'main_menu'
@@ -77,62 +76,7 @@ class Game:
         self.last_picked_item = None
         self.last_picked_pokemon = None
 
-    def dex_sanity(self):
-        for i, poke in enumerate(self.pokelist):
-            name = poke['name']
-            current = None
-            id_num = 0
-
-            with open(f'pokemon/{name}.json', 'r') as f:
-                current = json.load(f)
-                id_num = current['id']
-
-            if id_num >= 10000:
-                self.dex_num = i - 1
-                break
-
-    def display_text(self):
-        for sprite in self.pokemon_choices:
-            sprite.display_text(self.display_surface)
-
-    def item_smuggling(self):
-        for mon in self.pokemon_choices:
-            chance = mon.item_chance()
-            if random.random() < chance:
-                index = random.randint(0, len(self.item_list) - 1)
-                new_item = eval(self.item_list[index]['class'])(self.item_list[index])
-                new_item.is_hidden = not self.item_effected_vars['revealed']
-                mon.hold_item(new_item)
-
-    def state_sanity(self):
-
-        if self.main_button.is_clicked() and self.can_choose:
-            self.can_choose = False
-            self.state = 'main_menu'
-
-        if self.drafter_button.is_clicked() and self.can_choose:
-            self.can_choose = False
-            self.state = 'pokemon_draft'
-
-        if self.state == 'pokemon_draft':
-            if self.items_picked <= len(self.box) / 3:
-                self.state = 'item_draft'
-
-    def display_last_picked(self):
-        if self.last_picked_item:
-            self.last_picked_item.is_hidden = False
-            self.last_picked_item.rect.midright = self.bag_button.rect.midleft
-            self.display_surface.blit(self.last_picked_item.image, self.last_picked_item.rect.topleft)
-
-        if self.last_picked_pokemon:
-            self.last_picked_pokemon.small_rect.midright = self.box_button.rect.midleft
-            self.display_surface.blit(self.last_picked_pokemon.small_image, self.last_picked_pokemon.small_rect.topleft)
-
-    def buttons_default(self):
-        for sprite in self.buttons.sprites():
-            sprite.rect.topleft = sprite.default_pos
-
-        self.point_tracker.rect.midright = self.point_tracker.default_pos
+        self.item_using = None
 
     def main_menu(self):
         self.biker.target_x = self.width / 2
@@ -147,7 +91,7 @@ class Game:
         self.main_button.rect.bottomright = (0,0)
         self.point_tracker.rect.bottomright = (0,0)
 
-    def pokemon_draft(self, dt):
+    def pokemon_draft(self):
         self.biker.target_x = 150
         if not self.pokemon_choices:
             self.create_pokemon(Pokemon, self.item_effected_vars['choice_num'], self.pokelist)
@@ -156,14 +100,15 @@ class Game:
 
         self.buttons_default()
 
-        self.pokemon_choices.update(dt)
+        self.pokemon_choices.update()
         self.pokemon_choices.draw(self.display_surface)
 
         self.display_last_picked()
 
         for sprite in self.pokemon_choices:
 
-            self.display_text()
+            self.display_text(self.pokemon_choices)
+            sprite.display_item(self.display_surface)
 
             if sprite.bst > self.item_effected_vars['points']:
                 sprite.set_cant_afford()
@@ -214,14 +159,149 @@ class Game:
 
                 self.state = 'pokemon_draft'
 
-    def bag_view(self):
-        pass
-
     def box_view(self):
-        pass
+        self.bag_box_setup()
+        self.display_text(self.box)
+
+        for sprite in self.bag.sprites():
+            if sprite.is_hovering() and not self.item_using:
+                sprite.text.rect.midtop = sprite.rect.midbottom
+                self.display_surface.blit(sprite.text.image, sprite.text.rect.topleft)
+
+            if sprite.is_clicked() and self.can_choose and not self.item_using:
+                self.can_choose = False
+                self.item_using = sprite
+                self.bag.remove(sprite)
+
+        if self.item_using:
+            self.item_using.rect.center = pygame.mouse.get_pos()
+            self.display_surface.blit(self.item_using.image, self.item_using.rect.topleft)
+
+        for sprite in self.box.sprites():
+            if sprite.is_clicked() and self.item_using and self.can_choose:
+                if hasattr(self.item_using, 'use_item'):
+                    self.item_using.use_item(sprite)
+
+                else:
+                    sprite.held_item = self.item_using
+                    self.item_using = None
 
     def mart(self):
         pass
+
+    def gray_setup(self):
+        self.gray_bg = pygame.surface.Surface((self.width / 1.25, self.height / 1.25))
+        self.gray_bg.set_alpha(125)
+        self.gray_bg.fill('gray')
+        self.gray_rect = self.gray_bg.get_rect()
+        self.gray_rect.center = (int(self.width / 2), int(self.height / 2))
+
+        self.little_rect = self.gray_rect.inflate(0, -self.gray_rect.height + 40)
+        self.little_rect.bottomleft = self.gray_rect.bottomleft
+
+    def dex_sanity(self):
+        for i, poke in enumerate(self.pokelist):
+            name = poke['name']
+            current = None
+            id_num = 0
+
+            with open(f'pokemon/{name}.json', 'r') as f:
+                current = json.load(f)
+                id_num = current['id']
+
+            if id_num >= 10000:
+                self.dex_num = i - 1
+                break
+
+    def display_text(self, group):
+        for sprite in group:
+            sprite.display_text(self.display_surface)
+            sprite.update()
+
+    def item_smuggling(self):
+        for mon in self.pokemon_choices:
+            chance = mon.item_chance()
+            if random.random() < chance:
+                index = random.randint(0, len(self.item_list) - 1)
+                new_item = eval(self.item_list[index]['class'])(self.item_list[index])
+                new_item.is_hidden = not self.item_effected_vars['revealed']
+                mon.hold_item(new_item)
+
+    def state_sanity(self):
+
+        if self.main_button.is_clicked() and self.can_choose:
+            self.can_choose = False
+            self.state = 'main_menu'
+            self.item_using = None
+
+        if self.drafter_button.is_clicked() and self.can_choose:
+            self.can_choose = False
+            self.state = 'pokemon_draft'
+            self.item_using = None
+
+        if self.box_button.is_clicked() and self.can_choose:
+            self.can_choose = False
+            self.state = 'box_view'
+
+        if self.state == 'pokemon_draft':
+            if self.items_picked <= len(self.box) / 3:
+                self.state = 'item_draft'
+
+    def display_last_picked(self):
+        if self.last_picked_item:
+            self.last_picked_item.is_hidden = False
+            self.last_picked_item.rect.midright = self.box_button.rect.midleft
+            self.display_surface.blit(self.last_picked_item.image, self.last_picked_item.rect.topleft)
+
+        if self.last_picked_pokemon:
+            self.last_picked_pokemon.small_rect.midbottom = self.box_button.rect.midtop
+            self.display_surface.blit(self.last_picked_pokemon.small_image, self.last_picked_pokemon.small_rect.topleft)
+
+    def buttons_default(self):
+        for sprite in self.buttons.sprites():
+            sprite.rect.topleft = sprite.default_pos
+
+        self.point_tracker.rect.midright = self.point_tracker.default_pos
+
+
+    def place_on_gray(self, group):
+        item_width = 0
+        item_height = 0
+        row_capacity = 0
+        prev_pos = vector(self.gray_rect.topleft)
+
+        for i, sprite in enumerate(group.sprites(), start=1):
+            if i == 1:
+                item_width = sprite.image.get_width()
+                item_height = sprite.image.get_height()
+                row_capacity = int(self.gray_bg.get_width() / item_width)
+
+            sprite.rect.topleft = prev_pos
+            prev_pos.x = sprite.rect.right
+            self.display_surface.blit(sprite.image, sprite.rect.topleft)
+
+            if i == row_capacity:
+                prev_pos.x = self.gray_rect.left
+                prev_pos.y += item_height
+
+
+    def bag_box_setup(self):
+        self.display_surface.blit(self.gray_bg, self.gray_rect.topleft)
+        self.buttons_default()
+        self.biker.target_x = self.width - 150
+        self.point_tracker.rect.bottomright = (0,0)
+
+        if self.state == 'box_view':
+            self.place_on_gray(self.box)
+
+            prev_pos = vector(self.little_rect.midleft)
+            for sprite in self.bag.sprites():
+                sprite.rects[0].midleft = prev_pos
+                prev_pos.x = sprite.rects[0].right
+                self.display_surface.blit(sprite.images[0], sprite.rects[0].topleft)
+
+        for sprite in self.box.sprites():
+            sprite.display_item(self.display_surface)
 
     def acquire_item(self, item):
         if hasattr(item, 'on_pickup'):
@@ -290,18 +370,21 @@ class Game:
 
             self.left_click_sanity()
             self.backgrounds.draw(self.display_surface)
-            self.buttons.draw(self.display_surface)
-
-            self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
 
             self.state_sanity()
 
             if self.state == 'main_menu':
                 self.main_menu()
             elif self.state == 'pokemon_draft':
-                self.pokemon_draft(dt)
+                self.pokemon_draft()
             elif self.state == 'item_draft':
                 self.item_draft()
+            elif self.state == 'box_view':
+                self.box_view()
+
+            self.buttons.draw(self.display_surface)
+
+            self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
 
             pygame.display.update()
 

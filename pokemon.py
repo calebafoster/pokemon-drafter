@@ -49,7 +49,7 @@ class Pokemon(pygame.sprite.Sprite):
         self.nickname = nickname
         
         self.import_assets()
-        self.small_image = pygame.transform.scale_by(self.image, 0.5)
+        self.small_image = pygame.transform.scale_by(self.image, 0.85)
         self.small_rect = self.small_image.get_rect()
         self.image = pygame.transform.scale_by(self.image, 2)   ## evo
         self.rect = self.image.get_rect(topleft = pos)
@@ -252,14 +252,17 @@ class Pokemon(pygame.sprite.Sprite):
 
         self.image = pygame.image.load(self.image_path).convert_alpha()
 
-    def display_item(self):
+    def display_item(self, display_surface):
         if self.held_item:
             self.held_item.update()
-            self.held_item.rect.bottomright = (self.image.get_width(), self.image.get_height())
-            self.image.blit(self.held_item.image, self.held_item.rect.topleft)
+            self.held_item.rects[0].bottomright = self.rect.bottomright
+            if self.held_item.is_hidden:
+                display_surface.blit(self.held_item.images[1], self.held_item.rects[0].topleft)
+            else:
+                display_surface.blit(self.held_item.images[0], self.held_item.rects[0].topleft)
 
-    def update(self, dt):
-        self.display_item()
+
+    def update(self):
         ##self.test_evo()
         self.cycle_logic()
 
