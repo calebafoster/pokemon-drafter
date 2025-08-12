@@ -136,8 +136,8 @@ class Game:
 
     def main_menu(self):
         self.biker.target_x = self.width / 2
-        self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 4))
-        self.point_tracker.rect.bottomright = (0,0)
+
+        self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 5))
         prev_pos = self.main_button.rect.midbottom
 
         for sprite in self.buttons.sprites():
@@ -145,6 +145,7 @@ class Game:
             prev_pos = sprite.rect.midbottom
 
         self.main_button.rect.bottomright = (0,0)
+        self.point_tracker.rect.bottomright = (0,0)
 
     def pokemon_draft(self, dt):
         self.biker.target_x = 150
