@@ -65,9 +65,9 @@ class Game:
         self.bag_button.rect.bottomleft = (self.box_button.rect.x, self.box_button.rect.y - 10)
         self.bag_button.default_pos = self.bag_button.rect.topleft
 
-        self.biker = Biker((100,360), self.backgrounds)
+        self.biker = Biker((int(self.width / 3), 360), self.backgrounds)
 
-        self.state = 'pokemon_draft'
+        self.state = 'main_menu'
 
         self.can_choose = False
 
@@ -108,12 +108,10 @@ class Game:
 
         if self.main_button.is_clicked() and self.can_choose:
             self.can_choose = False
-            self.biker.target_x = self.width / 2
             self.state = 'main_menu'
 
         if self.drafter_button.is_clicked() and self.can_choose:
             self.can_choose = False
-            self.biker.target_x = 150
             self.state = 'pokemon_draft'
 
         if self.state == 'pokemon_draft':
@@ -137,6 +135,7 @@ class Game:
         self.point_tracker.rect.midright = self.point_tracker.default_pos
 
     def main_menu(self):
+        self.biker.target_x = self.width / 2
         self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 4))
         self.point_tracker.rect.bottomright = (0,0)
         prev_pos = self.main_button.rect.midbottom
@@ -148,6 +147,7 @@ class Game:
         self.main_button.rect.bottomright = (0,0)
 
     def pokemon_draft(self, dt):
+        self.biker.target_x = 150
         if not self.pokemon_choices:
             self.create_pokemon(Pokemon, self.item_effected_vars['choice_num'], self.pokelist)
             self.arrange_options(self.pokemon_choices)
@@ -183,6 +183,7 @@ class Game:
                 self.pokemon_choices.empty()
 
     def item_draft(self):
+        self.biker.target_x = 150
         if not self.item_choices:
             self.create_items(6)
             self.item_choices.update()
