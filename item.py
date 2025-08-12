@@ -1,8 +1,5 @@
 import pygame
 from pathlib import Path
-## Notes for handling
-## Logic for Item use will live here and the handler (Bag)
-## Logic for holding items will live with the pokemon and the handler
 
 class Text(pygame.sprite.Sprite):
     def __init__(self, text, size=22):
@@ -17,7 +14,7 @@ class Text(pygame.sprite.Sprite):
 
         self.font = pygame.font.Font('pixel-font.ttf', size)
 
-        self.image = self.font.render(self.text, True, 'black')
+        self.image = self.font.render(self.text, False, 'white')
         self.rect = self.image.get_rect()
 
 
@@ -38,6 +35,7 @@ class Item(pygame.sprite.Sprite):
         self.is_big = False
 
         self.text = Text(self.name)
+        self.cost_text = Text(f'{self.cost}', size=30)
         
         self.clicked = False
 
@@ -51,7 +49,7 @@ class Item(pygame.sprite.Sprite):
         self.images.append(pygame.image.load('images/items/poke-ball.png').convert_alpha())
         self.rects.append(self.images[1].get_rect(topleft = (0,0)))
 
-        self.images.append(pygame.transform.scale_by(self.images[0], 3))
+        self.images.append(pygame.transform.scale_by(self.images[0], 4))
         self.rects.append(self.images[2].get_rect(topleft = (0,0)))
 
     def image_logic(self):
@@ -123,6 +121,12 @@ class EvoCandy(Item):
 
         self.name = item_dict['more_info']['alias']
         self.text = Text(self.name)
+
+    def check_evo(self, sprite):
+        if sprite.next_evo:
+            return True
+        else:
+            return False
 
     def use_item(self, sprite):
         sprite.force_evolve()

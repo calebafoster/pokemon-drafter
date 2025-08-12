@@ -47,10 +47,13 @@ class Game:
         self.bag = pygame.sprite.Group()
         self.box = pygame.sprite.Group()
         self.buttons = pygame.sprite.Group()
+        self.mart_choices = pygame.sprite.Group()
 
         self.item_effected_vars = {"choice_num": 4, 
                                    "points": 2500, 
                                    "revealed": False}
+
+        self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2 + 30))
 
         self.main_button = Button("Main Menu", self.buttons)
         self.main_button.rect.midbottom = (int(self.width / 2), self.height - 10)
@@ -64,13 +67,15 @@ class Game:
         self.box_button.rect.bottomright = (self.width - 10, self.height - 10)
         self.box_button.default_pos = self.box_button.rect.topleft
 
+        self.mart_button = Button("Mart", self.buttons)
+        self.mart_button.rect.topright = self.point_tracker.rect.bottomright
+        self.mart_button.default_pos = self.mart_button.rect.topleft
+
         self.biker = Biker((int(self.width / 3), 360), self.backgrounds)
 
         self.state = 'main_menu'
 
         self.can_choose = False
-
-        self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2 + 30))
 
         self.items_picked = 0
         self.last_picked_item = None
@@ -173,22 +178,57 @@ class Game:
                 self.item_using = sprite
                 self.bag.remove(sprite)
 
-        if self.item_using:
-            self.item_using.rect.center = pygame.mouse.get_pos()
-            self.display_surface.blit(self.item_using.image, self.item_using.rect.topleft)
-
         for sprite in self.box.sprites():
+            sprite.display_item(self.display_surface)
+
             if sprite.is_clicked() and self.item_using and self.can_choose:
                 if hasattr(self.item_using, 'use_item'):
-                    self.item_using.use_item(sprite)
-                    self.item_using = None
+                    if self.item_using.check_evo(sprite):
+
+                        self.item_using.use_item(sprite)
+                        self.item_using = None
+                    else:
+                        self.bag.add(self.item_using)
+                        self.item_using = None
 
                 else:
                     sprite.held_item = self.item_using
                     self.item_using = None
 
+        if self.item_using:
+            self.item_using.rect.center = pygame.mouse.get_pos()
+            self.display_surface.blit(self.item_using.image, self.item_using.rect.topleft)
+
+            if pygame.mouse.get_pressed()[0] and self.can_choose:
+                self.can_choose = False
+                self.bag.add(self.item_using)
+                self.item_using = None
+
     def mart(self):
-        pass
+        if not self.mart_choices:
+            self.create_mart_choices(16)
+            self.mart_choices.update()
+
+        self.bag_box_setup()
+        self.buttons_default()
+        self.mart_button.rect.midbottom = self.gray_rect.midtop
+        self.point_tracker.rect.midright = self.gray_rect.midright
+
+        for sprite in self.mart_choices.sprites():
+            if sprite.is_hovering():
+                sprite.cost_text.rect.midtop = sprite.rect.midtop
+                self.display_surface.blit(sprite.cost_text.image, sprite.cost_text.rect.topleft)
+                sprite.text.rect.midtop = sprite.rect.midbottom
+                self.display_surface.blit(sprite.text.image, sprite.text.rect.topleft)
+
+            if sprite.is_clicked() and self.can_choose and sprite.cost <= self.item_effected_vars['points']:
+                self.can_choose = False
+
+                self.acquire_item(sprite)
+
+                self.item_effected_vars['points'] -= sprite.cost
+
+                self.mart_choices.remove(sprite)
 
     def gray_setup(self):
         self.gray_bg = pygame.surface.Surface((self.width / 1.25, self.height / 1.25))
@@ -244,6 +284,10 @@ class Game:
             self.can_choose = False
             self.state = 'box_view'
 
+        if self.mart_button.is_clicked() and self.can_choose:
+            self.can_choose = False
+            self.state = 'mart'
+
         if self.state == 'pokemon_draft':
             if self.items_picked <= len(self.box) / 3:
                 self.state = 'item_draft'
@@ -264,7 +308,6 @@ class Game:
 
         self.point_tracker.rect.midright = self.point_tracker.default_pos
 
-
     def place_on_gray(self, group):
         item_width = 0
         item_height = 0
@@ -281,10 +324,9 @@ class Game:
             prev_pos.x = sprite.rect.right
             self.display_surface.blit(sprite.image, sprite.rect.topleft)
 
-            if i == row_capacity:
+            if i == row_capacity or i == row_capacity * 2:
                 prev_pos.x = self.gray_rect.left
                 prev_pos.y += item_height
-
 
     def bag_box_setup(self):
         self.display_surface.blit(self.gray_bg, self.gray_rect.topleft)
@@ -295,14 +337,14 @@ class Game:
         if self.state == 'box_view':
             self.place_on_gray(self.box)
 
-            prev_pos = vector(self.little_rect.midleft)
-            for sprite in self.bag.sprites():
-                sprite.rects[0].midleft = prev_pos
-                prev_pos.x = sprite.rects[0].right
-                self.display_surface.blit(sprite.images[0], sprite.rects[0].topleft)
+        if self.state == 'mart':
+            self.place_on_gray(self.mart_choices)
 
-        for sprite in self.box.sprites():
-            sprite.display_item(self.display_surface)
+        prev_pos = vector(self.little_rect.midleft)
+        for sprite in self.bag.sprites():
+            sprite.rects[0].midleft = prev_pos
+            prev_pos.x = sprite.rects[0].right
+            self.display_surface.blit(sprite.images[0], sprite.rects[0].topleft)
 
     def acquire_item(self, item):
         if hasattr(item, 'on_pickup'):
@@ -341,6 +383,27 @@ class Game:
             new_item.is_big = True
             self.item_choices.add(new_item)
 
+    def create_mart_choices(self, num):
+        guarantees = ['rare-candy', 'burn-drive', 'reveal-glass']
+        item_list = self.item_list
+
+        for guarantee in guarantees:
+            for item in item_list:
+                if item['name'] == guarantee:
+                    new_item = eval(item['class'])(item)
+                    new_item.is_hidden = False
+                    new_item.is_big = True
+                    self.mart_choices.add(new_item)
+                    break
+
+        for i in range(num - len(guarantees)):
+            random.shuffle(item_list)
+            item_dict = item_list[0]
+            new_item = eval(item_dict['class'])(item_dict)
+            new_item.is_hidden = False
+            new_item.is_big = True
+            self.mart_choices.add(new_item)
+
     def arrange_options(self, group):
         current_pos = vector(0,0)
         right_x = 0
@@ -364,7 +427,7 @@ class Game:
                     pygame.quit()
                     sys.exit()
 
-            dt = self.clock.tick() / 1000
+            dt = self.clock.tick(120) / 1000
 
             self.backgrounds.update(dt)
             self.point_tracker.update(self.item_effected_vars['points'])
@@ -382,6 +445,8 @@ class Game:
                 self.item_draft()
             elif self.state == 'box_view':
                 self.box_view()
+            elif self.state == 'mart':
+                self.mart()
 
             self.buttons.draw(self.display_surface)
 
