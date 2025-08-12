@@ -181,6 +181,7 @@ class Game:
             if sprite.is_clicked() and self.item_using and self.can_choose:
                 if hasattr(self.item_using, 'use_item'):
                     self.item_using.use_item(sprite)
+                    self.item_using = None
 
                 else:
                     sprite.held_item = self.item_using

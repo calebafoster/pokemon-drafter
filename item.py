@@ -1,6 +1,5 @@
 import pygame
 from pathlib import Path
-
 ## Notes for handling
 ## Logic for Item use will live here and the handler (Bag)
 ## Logic for holding items will live with the pokemon and the handler
@@ -124,6 +123,10 @@ class EvoCandy(Item):
 
         self.name = item_dict['more_info']['alias']
         self.text = Text(self.name)
+
+    def use_item(self, sprite):
+        sprite.force_evolve()
+        self.kill()
 
 
 class SellItem(Item):
