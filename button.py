@@ -9,6 +9,7 @@ class Button(pygame.sprite.Sprite):
         self.font = pygame.font.Font('pixel-font.ttf', size)
         self.image = self.font.render(self.text, False, 'white')
         self.rect = self.image.get_rect(topleft = pos)
+        self.default_pos = self.rect.topleft
 
     def is_clicked(self):
         pos = pygame.mouse.get_pos()

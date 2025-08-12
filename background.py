@@ -18,7 +18,7 @@ class Background(pygame.sprite.Sprite):
         self.default_pos = vector(self.rect.topleft)
 
         self.pos = vector(self.rect.topleft)
-        self.speed = 100
+        self.speed = 150
 
     def move(self, dt):
         if self.pos.x < self.default_pos.x - self.image.get_width():

@@ -49,6 +49,8 @@ class Pokemon(pygame.sprite.Sprite):
         self.nickname = nickname
         
         self.import_assets()
+        self.small_image = pygame.transform.scale_by(self.image, 0.5)
+        self.small_rect = self.small_image.get_rect()
         self.image = pygame.transform.scale_by(self.image, 2)   ## evo
         self.rect = self.image.get_rect(topleft = pos)
 
@@ -129,7 +131,6 @@ class Pokemon(pygame.sprite.Sprite):
             random.shuffle(chain_link)
             self.next_evo = chain_link[0]['species']['name']
             self.can_evolve = True
-            print(self.next_evo)
 
     def find_link(self):
         

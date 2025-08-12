@@ -14,6 +14,7 @@ class Points(pygame.sprite.Sprite):
         self.font = pygame.font.Font('pixel-font.ttf', size=size)
         self.image = self.font.render(f'Points: {points}', False, 'white')
         self.rect = self.image.get_rect(midright=pos)
+        self.default_pos = self.rect.midright
         
     def update(self, points):
         self.image = self.font.render(f'Points: {points}', False, 'white')
@@ -44,18 +45,25 @@ class Game:
         self.box = pygame.sprite.Group()
         self.buttons = pygame.sprite.Group()
 
-        self.main_button = Button("Main Menu", self.buttons)
-        self.main_button.rect.midbottom = (int(self.width / 2), self.height - 10)
-        self.mb_pos = self.main_button.rect.topleft
-
         self.item_effected_vars = {"choice_num": 4, 
                                    "points": 2000, 
                                    "revealed": False}
 
+        self.main_button = Button("Main Menu", self.buttons)
+        self.main_button.rect.midbottom = (int(self.width / 2), self.height - 10)
+        self.main_button.default_pos = self.main_button.rect.topleft
+
         self.drafter_button = Button("Drafter", self.buttons)
         self.drafter_button.rect.bottomleft = (10, self.height - 10)
-        self.db_pos = self.drafter_button.rect.topleft
+        self.drafter_button.default_pos = self.drafter_button.rect.topleft
 
+        self.box_button = Button("Box", self.buttons, size=45)
+        self.box_button.rect.bottomright = (self.width - 10, self.height - 10)
+        self.box_button.default_pos = self.box_button.rect.topleft
+
+        self.bag_button = Button("Bag", self.buttons, size= 45)
+        self.bag_button.rect.bottomleft = (self.box_button.rect.x, self.box_button.rect.y - 10)
+        self.bag_button.default_pos = self.bag_button.rect.topleft
 
         self.biker = Biker((100,360), self.backgrounds)
 
@@ -63,9 +71,11 @@ class Game:
 
         self.can_choose = False
 
-        self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2))
+        self.point_tracker = Points(self.item_effected_vars['points'], (self.width, self.height / 2 + 30))
 
         self.items_picked = 0
+        self.last_picked_item = None
+        self.last_picked_pokemon = None
 
     def dex_sanity(self):
         for i, poke in enumerate(self.pokelist):
@@ -98,16 +108,44 @@ class Game:
 
         if self.main_button.is_clicked() and self.can_choose:
             self.can_choose = False
+            self.biker.target_x = self.width / 2
             self.state = 'main_menu'
 
         if self.drafter_button.is_clicked() and self.can_choose:
             self.can_choose = False
+            self.biker.target_x = 150
             self.state = 'pokemon_draft'
 
         if self.state == 'pokemon_draft':
             if self.items_picked <= len(self.box) / 3:
                 self.state = 'item_draft'
 
+    def display_last_picked(self):
+        if self.last_picked_item:
+            self.last_picked_item.is_hidden = False
+            self.last_picked_item.rect.midright = self.bag_button.rect.midleft
+            self.display_surface.blit(self.last_picked_item.image, self.last_picked_item.rect.topleft)
+
+        if self.last_picked_pokemon:
+            self.last_picked_pokemon.small_rect.midright = self.box_button.rect.midleft
+            self.display_surface.blit(self.last_picked_pokemon.small_image, self.last_picked_pokemon.small_rect.topleft)
+
+    def buttons_default(self):
+        for sprite in self.buttons.sprites():
+            sprite.rect.topleft = sprite.default_pos
+
+        self.point_tracker.rect.midright = self.point_tracker.default_pos
+
+    def main_menu(self):
+        self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 4))
+        self.point_tracker.rect.bottomright = (0,0)
+        prev_pos = self.main_button.rect.midbottom
+
+        for sprite in self.buttons.sprites():
+            sprite.rect.midtop = prev_pos
+            prev_pos = sprite.rect.midbottom
+
+        self.main_button.rect.bottomright = (0,0)
 
     def pokemon_draft(self, dt):
         if not self.pokemon_choices:
@@ -115,9 +153,12 @@ class Game:
             self.arrange_options(self.pokemon_choices)
             self.item_smuggling()
 
+        self.buttons_default()
+
         self.pokemon_choices.update(dt)
         self.pokemon_choices.draw(self.display_surface)
 
+        self.display_last_picked()
 
         for sprite in self.pokemon_choices:
 
@@ -136,10 +177,8 @@ class Game:
                     self.acquire_item(sprite.held_item)
                     sprite.held_item = None
 
+                self.last_picked_pokemon = sprite
                 self.box.add(sprite)
-
-                for mon in self.box.sprites():
-                    print(mon.name)
 
                 self.pokemon_choices.empty()
 
@@ -149,15 +188,19 @@ class Game:
             self.item_choices.update()
             self.arrange_options(self.item_choices)
 
+        self.buttons_default()
+
         self.item_choices.update()
         self.item_choices.draw(self.display_surface)
+
+        self.display_last_picked()
 
         for sprite in self.item_choices.sprites():
 
             if sprite.is_hovering():
                 sprite.text.rect.midtop = sprite.rect.midbottom
                 self.display_surface.blit(sprite.text.image, sprite.text.rect.topleft)
-            
+
             if sprite.is_clicked() and self.can_choose:
                 self.can_choose = False
 
@@ -181,9 +224,12 @@ class Game:
     def acquire_item(self, item):
         if hasattr(item, 'on_pickup'):
             item.on_pickup(self.item_effected_vars)
-            print(self.item_effected_vars)
 
         else:
+            item.is_hidden = False
+            item.is_big = False
+            item.update()
+            self.last_picked_item = item
             self.bag.add(item)
 
     def left_click_sanity(self):
@@ -245,11 +291,11 @@ class Game:
             self.buttons.draw(self.display_surface)
 
             self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
-            
+
             self.state_sanity()
 
             if self.state == 'main_menu':
-                pass
+                self.main_menu()
             elif self.state == 'pokemon_draft':
                 self.pokemon_draft(dt)
             elif self.state == 'item_draft':
