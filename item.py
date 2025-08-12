@@ -139,7 +139,7 @@ class SellItem(Item):
 
         self.value = item_dict['more_info']['value']
 
-    def on_pickup(self, item_effected_vars):
+    def on_pickup(self, item_effected_vars, group):
         item_effected_vars['points'] += self.value
         self.kill()
 
@@ -148,8 +148,9 @@ class RevealGlass(Item):
     def __init__(self, item_dict):
         super().__init__(item_dict)
 
-    def on_pickup(self, item_effected_vars):
+    def on_pickup(self, item_effected_vars, group):
         item_effected_vars['revealed'] = True
+        group.empty()
         self.kill()
 
     def hidden_logic(self):
@@ -175,6 +176,7 @@ class OptionExpander(Item):
         self.name = item_dict['more_info']['alias']
         self.text = Text(self.name)
 
-    def on_pickup(self, item_effected_vars):
+    def on_pickup(self, item_effected_vars, group):
         item_effected_vars['choice_num'] += 1
+        group.empty()
         self.kill()

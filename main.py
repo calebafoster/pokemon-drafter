@@ -348,7 +348,7 @@ class Game:
 
     def acquire_item(self, item):
         if hasattr(item, 'on_pickup'):
-            item.on_pickup(self.item_effected_vars)
+            item.on_pickup(self.item_effected_vars, self.pokemon_choices)
 
         else:
             item.is_hidden = False
