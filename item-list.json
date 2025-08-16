@@ -1,5 +1,12 @@
 [
     {
+        "name": "rocky-helmet",
+        "img": "images/items/rocky-helmet.png",
+        "cost": 100,
+        "more_info": {},
+        "class": "HeldItem"
+    },
+    {
         "name": "kings-rock",
         "img": "images/items/kings-rock.png",
         "cost": 100,
@@ -30,7 +37,7 @@
     {
         "name": "leftovers",
         "img": "images/items/leftovers.png",
-        "cost": 100,
+        "cost": 150,
         "more_info": {},
         "class": "HeldItem"
     },
@@ -44,28 +51,28 @@
     {
         "name": "choice-specs",
         "img": "images/items/choice-specs.png",
-        "cost": 100,
+        "cost": 150,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "choice-scarf",
         "img": "images/items/choice-scarf.png",
-        "cost": 100,
+        "cost": 150,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "choice-band",
         "img": "images/items/choice-band.png",
-        "cost": 100,
+        "cost": 150,
         "more_info": {},
         "class": "HeldItem"
     },
     {
         "name": "focus-sash",
         "img": "images/items/focus-sash.png",
-        "cost": 100,
+        "cost": 150,
         "more_info": {},
         "class": "HeldItem"
     },

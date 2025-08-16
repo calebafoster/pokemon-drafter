@@ -78,6 +78,7 @@ class Game:
         self.can_choose = False
 
         self.items_picked = 0
+        self.evo_candies_bought = 1
         self.last_picked_item = None
         self.last_picked_pokemon = None
 
@@ -215,6 +216,10 @@ class Game:
         self.point_tracker.rect.midright = self.gray_rect.midright
 
         for sprite in self.mart_choices.sprites():
+            if sprite.name == 'evolution-candy' and sprite.cost != self.evo_candies_bought * 100:
+                sprite.cost = self.evo_candies_bought * 100
+                sprite.update_cost()
+
             if sprite.is_hovering():
                 sprite.cost_text.rect.midtop = sprite.rect.midtop
                 self.display_surface.blit(sprite.cost_text.image, sprite.cost_text.rect.topleft)
@@ -224,11 +229,16 @@ class Game:
             if sprite.is_clicked() and self.can_choose and sprite.cost <= self.item_effected_vars['points']:
                 self.can_choose = False
 
+                if sprite.name == 'evolution-candy':
+                    self.evo_candies_bought += 1
+
                 self.acquire_item(sprite)
 
                 self.item_effected_vars['points'] -= sprite.cost
 
                 self.mart_choices.remove(sprite)
+
+                self.mart_choices.update()
 
     def gray_setup(self):
         self.gray_bg = pygame.surface.Surface((self.width / 1.25, self.height / 1.25))
@@ -385,7 +395,7 @@ class Game:
 
     def create_mart_choices(self, num):
         guarantees = ['rare-candy', 'burn-drive', 'reveal-glass']
-        item_list = self.item_list
+        item_list = [item for item in self.item_list if item['class'] != "SellItem"]
 
         for guarantee in guarantees:
             for item in item_list:

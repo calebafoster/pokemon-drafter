@@ -64,6 +64,9 @@ class Item(pygame.sprite.Sprite):
             self.image = self.images[0]
             self.rect = self.rects[0]
 
+    def update_cost(self):
+        self.cost_text = Text(f'{self.cost}', size=30)
+
     def is_clicked(self):
         pos = pygame.mouse.get_pos()
         action = False
@@ -101,6 +104,7 @@ class Item(pygame.sprite.Sprite):
 
     def update(self):
         self.image_logic()
+        self.update_cost()
 
 
 class HeldItem(Item):
