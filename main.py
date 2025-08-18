@@ -3,6 +3,7 @@ import sys
 from pokemon import Pokemon
 from biker import Biker
 from button import Button
+from exporter import Exporter
 import random
 import json
 from background import Background, Backgrounds
@@ -49,6 +50,8 @@ class Game:
         self.buttons = pygame.sprite.Group()
         self.mart_choices = pygame.sprite.Group()
 
+        self.exporter = Exporter(self.box)
+
         self.item_effected_vars = {"choice_num": 4, 
                                    "points": 2500, 
                                    "revealed": False}
@@ -71,6 +74,10 @@ class Game:
         self.mart_button.rect.topright = self.point_tracker.rect.bottomright
         self.mart_button.default_pos = self.mart_button.rect.topleft
 
+        self.end_button = Button("End", self.buttons)
+        self.end_button.rect.bottomright = (0,0)
+        self.end_button.rect.topleft = self.end_button.rect.topleft
+
         self.biker = Biker((int(self.width / 3), 360), self.backgrounds)
 
         self.state = 'main_menu'
@@ -87,7 +94,7 @@ class Game:
     def main_menu(self):
         self.biker.target_x = self.width / 2
 
-        self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 5))
+        self.main_button.rect.midtop = (int(self.width / 2), int(self.height / 6))
         prev_pos = self.main_button.rect.midbottom
 
         for sprite in self.buttons.sprites():
@@ -182,19 +189,25 @@ class Game:
         for sprite in self.box.sprites():
             sprite.display_item(self.display_surface)
 
-            if sprite.is_clicked() and self.item_using and self.can_choose:
-                if hasattr(self.item_using, 'use_item'):
-                    if self.item_using.check_evo(sprite):
+            if sprite.is_clicked() and self.can_choose:
+                self.can_choose = False
 
-                        self.item_using.use_item(sprite)
-                        self.item_using = None
+                if self.item_using:
+                    if hasattr(self.item_using, 'use_item'):
+                        if self.item_using.check_evo(sprite):
+
+                            self.item_using.use_item(sprite)
+                            self.item_using = None
+                        else:
+                            self.bag.add(self.item_using)
+                            self.item_using = None
+
                     else:
-                        self.bag.add(self.item_using)
+                        sprite.held_item = self.item_using
                         self.item_using = None
 
-                else:
-                    sprite.held_item = self.item_using
-                    self.item_using = None
+                elif not self.item_using:
+                    self.box.remove(sprite)
 
         if self.item_using:
             self.item_using.rect.center = pygame.mouse.get_pos()
@@ -239,6 +252,13 @@ class Game:
                 self.mart_choices.remove(sprite)
 
                 self.mart_choices.update()
+
+    def end(self):
+        self.exporter.create_text()
+        self.exporter.export()
+
+        pygame.quit()
+        sys.exit()
 
     def gray_setup(self):
         self.gray_bg = pygame.surface.Surface((self.width / 1.25, self.height / 1.25))
@@ -297,6 +317,10 @@ class Game:
         if self.mart_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'mart'
+
+        if self.end_button.is_clicked() and self.can_choose:
+            self.can_choose = False
+            self.state = 'end'
 
         if self.state == 'pokemon_draft':
             if self.items_picked <= len(self.box) / 3:
@@ -457,6 +481,8 @@ class Game:
                 self.box_view()
             elif self.state == 'mart':
                 self.mart()
+            elif self.state == 'end':
+                self.end()
 
             self.buttons.draw(self.display_surface)
 
