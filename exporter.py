@@ -1,4 +1,5 @@
 import random
+import pyperclip
 
 
 class Exporter:
@@ -40,7 +41,7 @@ class Exporter:
 
             text = text + '\n'
 
-        self.text = text
+        pyperclip.copy(text)
 
     def random_nature(self):
         natures = ['Hardy', 'Lonely', 'Adamant', 'Naughty', 'Brave', 

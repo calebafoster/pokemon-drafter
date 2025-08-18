@@ -76,7 +76,11 @@ class Game:
 
         self.end_button = Button("End", self.buttons)
         self.end_button.rect.bottomright = (0,0)
-        self.end_button.rect.topleft = self.end_button.rect.topleft
+        self.end_button.default_pos = self.end_button.rect.topleft
+
+        self.font = pygame.font.Font('pixel-font.ttf', size=25)
+        self.message = ''
+        self.message_surf = self.font.render('', True, 'white')
 
         self.biker = Biker((int(self.width / 3), 360), self.backgrounds)
 
@@ -255,10 +259,10 @@ class Game:
 
     def end(self):
         self.exporter.create_text()
-        self.exporter.export()
+        self.message = "Team has been copied to clipboard"
+        self.make_message(self.message)
 
-        pygame.quit()
-        sys.exit()
+        self.state = 'main_menu'
 
     def gray_setup(self):
         self.gray_bg = pygame.surface.Surface((self.width / 1.25, self.height / 1.25))
@@ -309,18 +313,22 @@ class Game:
             self.can_choose = False
             self.state = 'pokemon_draft'
             self.item_using = None
+            self.make_message('')
 
         if self.box_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'box_view'
+            self.make_message('')
 
         if self.mart_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'mart'
+            self.make_message('')
 
         if self.end_button.is_clicked() and self.can_choose:
             self.can_choose = False
             self.state = 'end'
+            self.make_message('')
 
         if self.state == 'pokemon_draft':
             if self.items_picked <= len(self.box) / 3:
@@ -453,6 +461,9 @@ class Game:
         for opt in group.sprites():
             opt.rect.x += offset
 
+    def make_message(self, message):
+        self.message_surf = self.font.render(message, True, 'white')
+
     def run(self):
         while True:
 
@@ -485,6 +496,7 @@ class Game:
                 self.end()
 
             self.buttons.draw(self.display_surface)
+            self.display_surface.blit(self.message_surf, (0,0))
 
             self.display_surface.blit(self.point_tracker.image, self.point_tracker.rect.topleft)
 
